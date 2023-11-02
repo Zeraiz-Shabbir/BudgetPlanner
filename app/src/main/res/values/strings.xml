@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">BudgetPlanner</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="add_income">Add Income</string>
+    <string name="budgeting">Budgeting</string>
+    <string name="enter_amount">Enter an amount</string>
+    <string name="starting_balance">Starting Balance:</string>
+    <string name="submit">Submit</string>
+    <string name="savings">Savings</string>
+    <string name="set_limit">Set Limit</string>
+    <string name="current_savings">Current savings:</string>
+    <string name="current_limit">Current limit:</string>
 </resources>
