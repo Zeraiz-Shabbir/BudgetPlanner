@@ -10,4 +10,15 @@
     <string name="set_limit">Set Limit</string>
     <string name="current_savings">Current savings:</string>
     <string name="current_limit">Current limit:</string>
+    <string name="label">Label:</string>
+    <string name="enter_name">Enter a name</string>
+    <string name="amount">Amount:</string>
+    <string name="frequency">Frequency:</string>
+    <string name="every">Every</string>
+    <string name="once">Once</string>
+    <string name="date">Date:</string>
+    <string name="date_select">Select a specific date</string>
+    <string name="date_today">Use today\'s date</string>
+
+
 </resources>
