@@ -19,6 +19,8 @@
     <string name="date">Date:</string>
     <string name="date_select">Select a specific date</string>
     <string name="date_today">Use today\'s date</string>
+    <string name="current_balance">Current Balance:</string>
+    <string name="exit">Exit</string>
 
 
 </resources>

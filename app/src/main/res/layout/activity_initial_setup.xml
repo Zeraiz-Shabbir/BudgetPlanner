@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".InitialSetupActivity">
 
     <Button
         android:id="@+id/initialAddExpense"
@@ -13,6 +14,10 @@
         android:layout_marginTop="14dp"
         android:layout_marginEnd="43dp"
         android:text="@string/add_expense"
+        android:textSize="28sp"
+        app:icon="@mipmap/add_payment_background"
+        app:iconPadding="0dp"
+        app:iconSize="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialAddIncome" />
@@ -25,6 +30,10 @@
         android:layout_marginTop="14dp"
         android:layout_marginEnd="43dp"
         android:text="@string/add_income"
+        android:textSize="28sp"
+        app:icon="@mipmap/add_income_background"
+        app:iconPadding="0dp"
+        app:iconSize="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialBudgeting" />
@@ -37,6 +46,10 @@
         android:layout_marginTop="14dp"
         android:layout_marginEnd="43dp"
         android:text="@string/budgeting"
+        android:textSize="28sp"
+        app:icon="@mipmap/budgeting_background"
+        app:iconPadding="0dp"
+        app:iconSize="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/balanceStart" />
