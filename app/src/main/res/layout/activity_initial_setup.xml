@@ -61,9 +61,12 @@
         android:layout_marginTop="14dp"
         android:layout_marginEnd="43dp"
         android:ems="10"
-        android:inputType="numberDecimal"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:focusedByDefault="false"
         android:hint="@string/enter_amount"
         android:importantForAutofill="no"
+        android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

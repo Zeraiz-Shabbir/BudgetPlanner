@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -18,6 +19,9 @@ public class InitialSetupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // hide keyboard by default so it doesn't automatically focus on EditTexts
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         // Check if the initial setup has already been completed
         SharedPreferences preferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
         boolean isInitialSetupCompleted = preferences.getBoolean("isInitialSetupCompleted", false);
@@ -27,6 +31,7 @@ public class InitialSetupActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish(); // Finish this activity so the user cannot go back to it
         } else {
+
             // The initial setup is not completed, show the initial setup screen
             setContentView(R.layout.activity_initial_setup);
 

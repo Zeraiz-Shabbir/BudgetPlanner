@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,9 +23,14 @@ public class MainActivity extends AppCompatActivity {
     private MonthAdapter adapter;
     private List<MonthItem> monthList;
 
+    // TODO
+    // Create new method (?) to save MonthItems to database
+    // As it is right now, recyclerViews reset after each relaunch of app, only remembering the current month
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -31,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         monthList = new ArrayList<>();
         updateMonthList();
 
-        adapter = new MonthAdapter(monthList);
+        adapter = new MonthAdapter(this, monthList);
         recyclerView.setAdapter(adapter);
 
         // Check for month change and update RecyclerView
@@ -46,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, InitialSetupActivity.class);
             startActivity(intent);
         }
+
+        // Set a click listener for the "Exit" button
+        Button exitButton = findViewById(R.id.exit);
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Finish the activity and exit the app
+            }
+        });
+
     }
 
     private void updateMonthList() {
@@ -96,7 +115,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }, oneMinute);
     }
-
-
 
 }

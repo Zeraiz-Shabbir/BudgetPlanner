@@ -3,6 +3,7 @@ package com.example.budgetplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CalendarView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -15,9 +16,16 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
     private Spinner timeDropDown;
     private CalendarView calendarView;
 
+    // TODO
+    // Fill in logic to correctly handle either adding an expense or an income based on booleans
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // hide keyboard by default so it doesn't automatically focus on EditTexts
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         setContentView(R.layout.activity_add_income_expense);
 
         // Read the extra parameter to determine income or expense

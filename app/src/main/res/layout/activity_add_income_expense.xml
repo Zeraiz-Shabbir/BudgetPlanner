@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -27,12 +26,12 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="75dp"
             android:ems="10"
-            android:inputType="text"
             android:hint="@string/enter_name"
+            android:importantForAutofill="no"
+            android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:importantForAutofill="no" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/amount"
@@ -50,12 +49,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:ems="10"
-            android:inputType="numberDecimal"
             android:hint="@string/enter_amount"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/labelEditText"
-            android:importantForAutofill="no" />
+            app:layout_constraintTop_toBottomOf="@+id/labelEditText" />
 
         <TextView
             android:id="@+id/frequency"
