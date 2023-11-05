@@ -13,7 +13,13 @@
         android:theme="@style/Theme.BudgetPlanner"
         tools:targetApi="31" >
         <activity
-            android:name=".ShowWarningActivity"
+            android:name=".AddIncomeExpenseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BudgetingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InitialSetupActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

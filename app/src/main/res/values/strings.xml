@@ -1,13 +1,26 @@
 <resources>
     <string name="app_name">BudgetPlanner</string>
-    <string name="warning">Warning</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="you_exceeded_your_set_limit_remove_payment">You exceeded your set limit! Remove payment?</string>
-    <string name="savings_progress">Savings Progress</string>
-    <string name="spending_progress">Spending Progress</string>
-    <string name="enter_savings_amount">Enter Savings Amount</string>
-    <string name="set_spending_limit">Set Spending Limit</string>
-    <string name="you_have_depleted_your_savings_remove_saving">You have depleted your savings! Remove saving?</string>
-    <string name="show_warning">Show Warning</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="add_income">Add Income</string>
+    <string name="budgeting">Budgeting</string>
+    <string name="enter_amount">Enter an amount</string>
+    <string name="starting_balance">Starting Balance:</string>
+    <string name="submit">Submit</string>
+    <string name="savings">Savings</string>
+    <string name="set_limit">Set Limit</string>
+    <string name="current_savings">Current savings:</string>
+    <string name="current_limit">Current limit:</string>
+    <string name="label">Label:</string>
+    <string name="enter_name">Enter a name</string>
+    <string name="amount">Amount:</string>
+    <string name="frequency">Frequency:</string>
+    <string name="every">Every</string>
+    <string name="once">Once</string>
+    <string name="date">Date:</string>
+    <string name="date_select">Select a specific date</string>
+    <string name="date_today">Use today\'s date</string>
+    <string name="current_balance">Current Balance:</string>
+    <string name="exit">Exit</string>
+
+
 </resources>
