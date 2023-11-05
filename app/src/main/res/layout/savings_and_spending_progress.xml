@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Savings Progress"
+        android:text="@string/savings_progress"
         android:textSize="18sp"
         android:textColor="#333333"
         android:layout_marginBottom="8dp"/>
@@ -29,7 +29,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Spending Progress"
+        android:text="@string/spending_progress"
         android:textSize="18sp"
         android:textColor="#333333"
         android:layout_marginBottom="16dp"/>
@@ -50,10 +50,10 @@
         android:id="@+id/savings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter Savings Amount"
+        android:text="@string/enter_savings_amount"
         android:textColor="#FFFFFF"
         android:backgroundTint="#00796B"
-        android:icon="@drawable/ic_savings"
+
         android:iconTint="#FFFFFF"
         android:iconSize="18dp"
         android:iconPadding="4dp"
@@ -65,10 +65,10 @@
         android:id="@+id/limit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Spending Limit"
+        android:text="@string/set_spending_limit"
         android:textColor="#FFFFFF"
         android:backgroundTint="#F44336"
-        android:icon="@drawable/ic_limit"
+
         android:iconTint="#FFFFFF"
         android:iconSize="18dp"
         android:iconPadding="4dp"

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">BudgetPlanner</string>
+    <string name="warning">Warning</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="you_exceeded_your_set_limit_remove_payment">You exceeded your set limit! Remove payment?</string>
+    <string name="savings_progress">Savings Progress</string>
+    <string name="spending_progress">Spending Progress</string>
+    <string name="enter_savings_amount">Enter Savings Amount</string>
+    <string name="set_spending_limit">Set Spending Limit</string>
+    <string name="you_have_depleted_your_savings_remove_saving">You have depleted your savings! Remove saving?</string>
+    <string name="show_warning">Show Warning</string>
 </resources>

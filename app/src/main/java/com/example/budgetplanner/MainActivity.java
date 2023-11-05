@@ -1,16 +1,12 @@
 package com.example.budgetplanner;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+// MainActivity.java
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.savings_depletion_warning_popup);
-
-        System.out.println("Hello World");
-    }
 }

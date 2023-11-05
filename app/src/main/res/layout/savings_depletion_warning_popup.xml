@@ -20,7 +20,7 @@
         android:id="@+id/warning_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="You have depleted your savings! Remove saving?"
+        android:text="@string/you_have_depleted_your_savings_remove_saving"
         android:padding="16dp" />
 
     <LinearLayout
