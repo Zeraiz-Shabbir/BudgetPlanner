@@ -18,9 +18,9 @@ public class BudgetDataSource {
     private SQLiteDatabase db;
     private BudgetDBHelper helper;
 
-    public BudgetDataSource(Context context, String tableName) {
+    public BudgetDataSource(Context context, String monthTableName, String savingsTableName) {
 
-        this.helper = new BudgetDBHelper(context, tableName);
+        this.helper = new BudgetDBHelper(context, monthTableName, savingsTableName);
         this.db = helper.getWritableDatabase();
     }
 
@@ -33,19 +33,31 @@ public class BudgetDataSource {
         statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT, amount);
         statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_NOTES, notes);
 
-        this.db.insert(helper.getTableName(), null, statement);
+        this.db.insert(helper.getMonthTableName(), null, statement);
     }
 
     public void removeStatement(String date, String label, Double amount, String notes) {
 
-        db.delete(helper.getTableName(),
+        db.delete(helper.getMonthTableName(),
                 BudgetContract.BudgetStatement.COLUMN_NAME_DATE + "='" + date + "' AND " +
                         BudgetContract.BudgetStatement.COLUMN_NAME_LABEL + "='" + label + "' AND " +
-                        BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT + "='" + amount + "'",
+                        BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT + "='" + amount + "'" +
+                        BudgetContract.BudgetStatement.COLUMN_NAME_NOTES + "='" + notes + "'",
                 null);
     }
 
-    public void closeDatabase() {
+    public void addBudgeting(Double currBalance, Double setLimit, Double savings) {
+
+        ContentValues statement = new ContentValues();
+
+        statement.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, currBalance);
+        statement.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, setLimit);
+        statement.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, savings);
+
+        this.db.insert(helper.getSavingsTableName(), null, statement);
+    }
+
+    public void close() {
 
         db.close();
         helper.close();

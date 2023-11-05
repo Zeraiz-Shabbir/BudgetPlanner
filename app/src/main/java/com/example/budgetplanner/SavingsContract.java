@@ -4,13 +4,13 @@ import android.provider.BaseColumns;
 
 /**
  * Contract class which explicitly specifies the layout of the schema,
- * a formal declaration of how the SQLite database is organized.
+ * a formal declaration of how the SQLite table for budgeting is organized.
  *
  * @author Avyuktkrishna Ramasamy
  * @version 1.0
- * @since 11/2/23
+ * @since 11/4/23
  */
-public final class BudgetContract {
+public class SavingsContract {
 
     // Table name
     private String tableName;
@@ -25,15 +25,14 @@ public final class BudgetContract {
      * Constructor has been made package-level access in order
      * to prevent it from being instantiated outside the package
      */
-    BudgetContract(String tableName) {
+    SavingsContract(String tableName) {
 
         setTableName(tableName);
         setSqlCreateStatements("CREATE TABLE " + this.tableName + " (" +
-                BudgetStatement._ID + " INTEGER PRIMARY KEY," +
-                BudgetStatement.COLUMN_NAME_DATE + " TEXT," +
-                BudgetStatement.COLUMN_NAME_LABEL + " TEXT," +
-                BudgetStatement.COLUMN_NAME_AMOUNT + " REAL," +
-                BudgetStatement.COLUMN_NAME_NOTES + " TEXT)");
+                SavingsContract.SavingsStatement._ID + " INTEGER PRIMARY KEY," +
+                SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE + " REAL," +
+                SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT + " REAL," +
+                SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS + " REAL)");
         setSqlDeleteStatements("DROP TABLE IF EXISTS " + this.tableName);
     }
 
@@ -68,18 +67,17 @@ public final class BudgetContract {
     }
 
     /**
-     * This inner class defines table contents for each monthly statement information table
+     * This inner class defines table contents for budgeting table
      *
      * @author Avyuktkrishna Ramasamy
      * @version 1.0
      * @since 11/2/23
      */
-    public static class BudgetStatement implements BaseColumns {
+    public static class SavingsStatement implements BaseColumns {
 
         // Constant(s)
-        public static final String COLUMN_NAME_DATE = "date";
-        public static final String COLUMN_NAME_LABEL = "label";
-        public static final String COLUMN_NAME_AMOUNT = "amount";
-        public static final String COLUMN_NAME_NOTES = "notes";
+        public static final String COLUMN_NAME_CURR_BALANCE = "balance";
+        public static final String COLUMN_NAME_SET_LIMIT = "set_limit";
+        public static final String COLUMN_NAME_SAVINGS = "savings";
     }
 }

@@ -11,17 +11,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        System.out.println("Hello World");
+        String monthTableName = "nov2023";
+        String savingsTableName = "nov2023_budgeting";
+        BudgetDataSource dataSource = new BudgetDataSource(this, monthTableName, savingsTableName);
 
-        String tableName = "example";
-        BudgetDataSource dataSource = new BudgetDataSource(this, tableName);
         String date = "11/2/23";
         String label = "EXAMPLE TRANSACTION";
         Double amount = 5000.00;
         String notes = "This is an example transaction.";
 
         dataSource.addStatement(date, label, amount, notes);
-        dataSource.removeStatement(date, label, amount, notes);
-        dataSource.closeDatabase();
+
+        Double currBalance = 4000.00;
+        Double setLimit = 1000.00;
+        Double savings = 200.00;
+
+        dataSource.addBudgeting(currBalance, setLimit, savings);
+
+        dataSource.close();
     }
 }

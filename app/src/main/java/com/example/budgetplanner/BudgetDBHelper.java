@@ -20,14 +20,16 @@ public class BudgetDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "BudgetPlanner.db";
 
     // Variable(s)
-    private String tableName;
-    private BudgetContract contract;
+    private BudgetContract budgetContract;
+    private SavingsContract savingsContract;
 
-    public BudgetDBHelper(@Nullable Context context, String tableName) {
+    public BudgetDBHelper(@Nullable Context context, String monthTableName, String savingsTableName) {
 
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        setTableName(tableName);
-        setContract(new BudgetContract(tableName));
+        setMonthTableName(monthTableName);
+        setSavingsTableName(savingsTableName);
+        setBudgetContract(new BudgetContract(monthTableName));
+        setSavingsContract(new SavingsContract(savingsTableName));
     }
 
     /**
@@ -36,7 +38,8 @@ public class BudgetDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        sqLiteDatabase.execSQL(getContract().getSqlCreateStatements());
+        sqLiteDatabase.execSQL(getBudgetContract().getSqlCreateStatements());
+        sqLiteDatabase.execSQL(getSavingsContract().getSqlCreateStatements());
     }
 
     /**
@@ -47,27 +50,48 @@ public class BudgetDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
-        sqLiteDatabase.execSQL(getContract().getSqlDeleteStatements());
+        sqLiteDatabase.execSQL(getBudgetContract().getSqlDeleteStatements());
+        sqLiteDatabase.execSQL(getSavingsContract().getSqlDeleteStatements());
         onCreate(sqLiteDatabase);
     }
 
-    String getTableName() {
+    String getMonthTableName() {
 
-        return this.tableName;
+        return getBudgetContract().getTableName();
     }
 
-    void setTableName(String tableName) {
+    void setMonthTableName(String monthTableName) {
 
-        this.tableName = tableName;
+        getBudgetContract().setTableName(monthTableName);
     }
 
-    BudgetContract getContract() {
+    BudgetContract getBudgetContract() {
 
-        return this.contract;
+        return this.budgetContract;
     }
 
-    void setContract(BudgetContract contract) {
+    void setBudgetContract(BudgetContract budgetContract) {
 
-        this.contract = contract;
+        this.budgetContract = budgetContract;
+    }
+
+    public SavingsContract getSavingsContract() {
+
+        return this.savingsContract;
+    }
+
+    public void setSavingsContract(SavingsContract savingsContract) {
+
+        this.savingsContract = savingsContract;
+    }
+
+    public String getSavingsTableName() {
+
+        return getSavingsContract().getTableName();
+    }
+
+    public void setSavingsTableName(String savingsTableName) {
+
+        getSavingsContract().setTableName(savingsTableName);
     }
 }
