@@ -24,7 +24,7 @@ public class BudgetDataSource {
         this.db = helper.getWritableDatabase();
     }
 
-    public void addStatement(String date, String label, Double amount, String notes) {
+    public long addStatement(String date, String label, Double amount, String notes) {
 
         ContentValues statement = new ContentValues();
 
@@ -33,17 +33,32 @@ public class BudgetDataSource {
         statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT, amount);
         statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_NOTES, notes);
 
-        this.db.insert(helper.getMonthTableName(), null, statement);
+        return this.db.insert(helper.getMonthTableName(), null, statement);
     }
 
-    public void removeStatement(String date, String label, Double amount, String notes) {
+    public void removeStatement(Long id, String date, String label, Double amount, String notes) {
 
-        db.delete(helper.getMonthTableName(),
+        String whereClause = BudgetContract.BudgetStatement._ID + "='" + id + "' AND " +
                 BudgetContract.BudgetStatement.COLUMN_NAME_DATE + "='" + date + "' AND " +
-                        BudgetContract.BudgetStatement.COLUMN_NAME_LABEL + "='" + label + "' AND " +
-                        BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT + "='" + amount + "'" +
-                        BudgetContract.BudgetStatement.COLUMN_NAME_NOTES + "='" + notes + "'",
-                null);
+                BudgetContract.BudgetStatement.COLUMN_NAME_LABEL + "='" + label + "' AND " +
+                BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT + "='" + amount + "'" +
+                BudgetContract.BudgetStatement.COLUMN_NAME_NOTES + "='" + notes + "'";
+
+        this.db.delete(helper.getMonthTableName(), whereClause, null);
+    }
+
+    public void editStatement(Long id, String newDate, String newLabel, Double newAmount, String newNotes) {
+
+        String whereClause = "_id = '" + id + "'";
+        ContentValues statement = new ContentValues();
+
+        statement.put(BudgetContract.BudgetStatement._ID, id);
+        statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_DATE, newDate);
+        statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_LABEL, newLabel);
+        statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT, newAmount);
+        statement.put(BudgetContract.BudgetStatement.COLUMN_NAME_NOTES, newNotes);
+
+        this.db.update(helper.getMonthTableName(), statement, whereClause, null);
     }
 
     public void addBudgeting(Double currBalance, Double setLimit, Double savings) {
@@ -55,6 +70,17 @@ public class BudgetDataSource {
         statement.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, savings);
 
         this.db.insert(helper.getSavingsTableName(), null, statement);
+    }
+
+    public void editBudgeting(Double newBalance, Double newSetLimit, Double newSavings) {
+
+        ContentValues statement = new ContentValues();
+
+        statement.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
+        statement.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
+        statement.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
+
+        this.db.update(helper.getSavingsTableName(), statement, null, null);
     }
 
     public void close() {

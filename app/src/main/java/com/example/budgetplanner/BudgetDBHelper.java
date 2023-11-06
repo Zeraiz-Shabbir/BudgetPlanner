@@ -26,14 +26,14 @@ public class BudgetDBHelper extends SQLiteOpenHelper {
     public BudgetDBHelper(@Nullable Context context, String monthTableName, String savingsTableName) {
 
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        setMonthTableName(monthTableName);
-        setSavingsTableName(savingsTableName);
         setBudgetContract(new BudgetContract(monthTableName));
         setSavingsContract(new SavingsContract(savingsTableName));
+        setMonthTableName(monthTableName);
+        setSavingsTableName(savingsTableName);
     }
 
     /**
-     * @param sqLiteDatabase
+     * @param sqLiteDatabase the database
      */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -43,9 +43,9 @@ public class BudgetDBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * @param sqLiteDatabase
-     * @param i
-     * @param i1
+     * @param sqLiteDatabase the database
+     * @param i the old version number
+     * @param i1 the new version number
      */
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
