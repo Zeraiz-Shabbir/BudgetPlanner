@@ -2,6 +2,13 @@ package com.example.budgetplanner;
 
 import android.content.Context;
 
+/**
+ * DBTest class is used for database testing purposes only.
+ *
+ * @author Avyuktkrishna Ramasamy
+ * @version 1.0
+ * @since 11/5/23
+ */
 final class DBTest {
 
     public static void test(Context context) {
@@ -15,7 +22,9 @@ final class DBTest {
         Double amount = 5000.00;
         String notes = "This is an example transaction.";
 
-        long id = dataSource.addStatement(date, label, amount, notes);
+        Statement stmt = new Statement(date, label, amount, notes);
+        long id = dataSource.addStatement(stmt);
+        stmt.setId(id);
 
         Double currBalance = 4000.00;
         Double setLimit = 1000.00;
@@ -23,11 +32,12 @@ final class DBTest {
 
         dataSource.addBudgeting(currBalance, setLimit, savings);
 
-        date = "11/5/23";
-        amount = -2000.00;
+        String newDate = "11/5/23";
+        Double newAmount = -2000.00;
+        stmt.setDate(newDate);
+        stmt.setAmount(newAmount);
 
-        dataSource.editStatement(id, date, label, amount, notes);
-
+        dataSource.editStatement(stmt);
         dataSource.close();
     }
 }

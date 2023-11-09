@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
  * Helper class which makes interacting with the database easier.
  *
  * @author Avyuktkrishna Ramasamy
- * @version 1.0
+ * @version 2.0
  * @since 11/2/23
  */
 public class BudgetDBHelper extends SQLiteOpenHelper {

@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  * a formal declaration of how the SQLite database is organized.
  *
  * @author Avyuktkrishna Ramasamy
- * @version 1.0
+ * @version 2.0
  * @since 11/2/23
  */
 public final class BudgetContract {
