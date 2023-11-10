@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InitialSetupActivity">
+
+    <Button
+        android:id="@+id/initialAddExpense"
+        android:layout_width="325dp"
+        android:layout_height="156dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="43dp"
+        android:text="@string/add_expense"
+        android:textSize="28sp"
+        app:icon="@mipmap/add_payment_background"
+        app:iconPadding="0dp"
+        app:iconSize="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/initialAddIncome" />
+
+    <Button
+        android:id="@+id/initialAddIncome"
+        android:layout_width="325dp"
+        android:layout_height="156dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="43dp"
+        android:text="@string/add_income"
+        android:textSize="28sp"
+        app:icon="@mipmap/add_income_background"
+        app:iconPadding="0dp"
+        app:iconSize="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/initialBudgeting" />
+
+    <Button
+        android:id="@+id/initialBudgeting"
+        android:layout_width="325dp"
+        android:layout_height="156dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="43dp"
+        android:text="@string/budgeting"
+        android:textSize="28sp"
+        app:icon="@mipmap/budgeting_background"
+        app:iconPadding="0dp"
+        app:iconSize="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/balanceStart" />
+
+    <EditText
+        android:id="@+id/balanceStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="43dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:hint="@string/enter_amount"
+        android:importantForAutofill="no"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/startingBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="28dp"
+        android:text="@string/starting_balance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/initalSubmit"
+        android:layout_width="151dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="130dp"
+        android:text="@string/submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/initialAddExpense" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
