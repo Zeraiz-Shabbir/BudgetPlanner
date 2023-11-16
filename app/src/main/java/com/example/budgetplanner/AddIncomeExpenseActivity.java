@@ -112,6 +112,7 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                     double spentAmt = 0.00;
                     final boolean[] cancelpayment = {false};
 
+                    double spentAmt = ds.getAmountSpent();
 
                     // Expense would negate balance, hence all savings as well
                     if (balance - amount < 0) {
@@ -123,7 +124,6 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                                 dialog.dismiss();
                             }
                         });
-
 
                     }
                     // Expense would cross the spending limit set previously
@@ -137,7 +137,13 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                             }
                         });
 
+                        WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
 
+                                finish();
+                            }
+                        });
                     }
                     // Expense didn't deplete savings or cross spending limit
                     else {
