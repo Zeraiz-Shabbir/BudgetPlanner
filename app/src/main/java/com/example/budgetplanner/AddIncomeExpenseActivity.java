@@ -109,7 +109,6 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                     double balance = ds.getBalance();
                     double setLimit = ds.getSetLimit();
                     // Field for monitoring how much the user has come closer to spending limit
-                    double spentAmt = 0.00;
                     final boolean[] cancelpayment = {false};
 
                     double spentAmt = ds.getAmountSpent();
