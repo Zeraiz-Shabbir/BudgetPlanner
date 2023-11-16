@@ -17,28 +17,31 @@ public class Statement {
     private String date;
     private String label;
     private Double amount;
+    private Integer frequency;
     private String notes;
 
     public Statement() {
 
-        this(0L, null, null, 0.00, null);
+        this(0L, null, null, 0.00, 0, null);
     }
 
-    public Statement(String date, String label, Double amount, String notes) {
+    public Statement(String date, String label, Double amount, Integer frequency, String notes) {
 
         setId(0L);
         setDate(date);
         setLabel(label);
         setAmount(amount);
+        setFrequency(frequency);
         setNotes(notes);
     }
 
-    public Statement(Long id, String date, String label, Double amount, String notes) {
+    public Statement(Long id, String date, String label, Double amount, Integer frequency, String notes) {
 
         setId(id);
         setDate(date);
         setLabel(label);
         setAmount(amount);
+        setFrequency(frequency);
         setNotes(notes);
     }
 
@@ -90,8 +93,17 @@ public class Statement {
         stmt.put(BudgetStatement.COLUMN_NAME_DATE, getDate());
         stmt.put(BudgetStatement.COLUMN_NAME_LABEL, getLabel());
         stmt.put(BudgetStatement.COLUMN_NAME_AMOUNT, getAmount());
+        stmt.put(BudgetStatement.COLUMN_NAME_FREQUENCY, getFrequency());
         stmt.put(BudgetStatement.COLUMN_NAME_NOTES, getNotes());
 
         return stmt;
+    }
+
+    public Integer getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(Integer frequency) {
+        this.frequency = frequency;
     }
 }

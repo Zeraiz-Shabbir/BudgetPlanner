@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  * a formal declaration of how the SQLite table for budgeting is organized.
  *
  * @author Avyuktkrishna Ramasamy
- * @version 1.0
+ * @version 3.0
  * @since 11/4/23
  */
 public class SavingsContract {
@@ -29,10 +29,11 @@ public class SavingsContract {
 
         setTableName(tableName);
         setSqlCreateStatements("CREATE TABLE " + this.tableName + " (" +
-                SavingsContract.SavingsStatement._ID + " INTEGER PRIMARY KEY," +
-                SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE + " REAL," +
-                SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT + " REAL," +
-                SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS + " REAL)");
+                SavingsStatement._ID + " INTEGER PRIMARY KEY," +
+                SavingsStatement.COLUMN_NAME_CURR_BALANCE + " REAL," +
+                SavingsStatement.COLUMN_NAME_SET_LIMIT + " REAL," +
+                SavingsStatement.COLUMN_NAME_AMOUNT_SPENT + " REAL," +
+                SavingsStatement.COLUMN_NAME_SAVINGS + " REAL)");
         setSqlDeleteStatements("DROP TABLE IF EXISTS " + this.tableName);
     }
 
@@ -78,6 +79,7 @@ public class SavingsContract {
         // Constant(s)
         public static final String COLUMN_NAME_CURR_BALANCE = "balance";
         public static final String COLUMN_NAME_SET_LIMIT = "set_limit";
+        public static final String COLUMN_NAME_AMOUNT_SPENT = "amount_spent";
         public static final String COLUMN_NAME_SAVINGS = "savings";
     }
 }

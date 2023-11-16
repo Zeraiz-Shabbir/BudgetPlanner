@@ -55,8 +55,6 @@
         android:backgroundTint="#00796B"
 
         android:iconTint="#FFFFFF"
-        android:iconSize="18dp"
-        android:iconPadding="4dp"
         android:padding="16dp"
         android:layout_gravity="center"/>
 
@@ -70,8 +68,6 @@
         android:backgroundTint="#F44336"
 
         android:iconTint="#FFFFFF"
-        android:iconSize="18dp"
-        android:iconPadding="4dp"
         android:padding="16dp"
         android:layout_gravity="center"/>
 
