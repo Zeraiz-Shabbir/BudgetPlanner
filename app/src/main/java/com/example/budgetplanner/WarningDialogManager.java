@@ -28,6 +28,27 @@ public class WarningDialogManager {
 
         builder.show();
     }
+    public static void showSavingDepletedDialog(Context context, DialogInterface.OnClickListener yesClickListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.savings_depletion_warning_popup, null);
+        builder.setView(dialogView);
+
+        // Set up the "Yes" button click listener
+        builder.setPositiveButton("Yes", yesClickListener);
+        
+
+        // Set up the "No" button click listener
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Handle "No" button click (if needed)
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
 }
 
 
