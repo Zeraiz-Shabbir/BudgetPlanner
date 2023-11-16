@@ -33,6 +33,7 @@ public final class BudgetContract {
                 BudgetStatement.COLUMN_NAME_DATE + " TEXT," +
                 BudgetStatement.COLUMN_NAME_LABEL + " TEXT," +
                 BudgetStatement.COLUMN_NAME_AMOUNT + " REAL," +
+                BudgetStatement.COLUMN_NAME_FREQUENCY + "INTEGER," +
                 BudgetStatement.COLUMN_NAME_NOTES + " TEXT)");
         setSqlDeleteStatements("DROP TABLE IF EXISTS " + this.tableName);
     }
@@ -80,6 +81,7 @@ public final class BudgetContract {
         public static final String COLUMN_NAME_DATE = "date";
         public static final String COLUMN_NAME_LABEL = "label";
         public static final String COLUMN_NAME_AMOUNT = "amount";
+        public static final String COLUMN_NAME_FREQUENCY = "frequency";
         public static final String COLUMN_NAME_NOTES = "notes";
     }
 }

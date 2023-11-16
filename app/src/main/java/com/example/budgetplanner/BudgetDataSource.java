@@ -16,7 +16,7 @@ import java.util.List;
  * Can use this class to add/remove a statement from the database.
  *
  * @author Avyuktkrishna Ramasamy
- * @version 2.0
+ * @version 4.0
  * @since 11/2/23
  */
 public class BudgetDataSource {
@@ -33,11 +33,12 @@ public class BudgetDataSource {
 
     public long addStatement(Statement stmt) {
 
-        ContentValues values = stmt.toContentValues();
+        ContentValues values = new ContentValues();
 
         values.put(BudgetStatement.COLUMN_NAME_DATE, stmt.getDate());
         values.put(BudgetStatement.COLUMN_NAME_LABEL, stmt.getLabel());
         values.put(BudgetStatement.COLUMN_NAME_AMOUNT, stmt.getAmount());
+        values.put(BudgetStatement.COLUMN_NAME_FREQUENCY, stmt.getFrequency());
         values.put(BudgetStatement.COLUMN_NAME_NOTES, stmt.getNotes());
 
         return this.db.insert(this.helper.getMonthTableName(), null, values);
@@ -49,6 +50,7 @@ public class BudgetDataSource {
                 BudgetStatement.COLUMN_NAME_DATE + "='" + stmt.getDate() + "' AND " +
                 BudgetStatement.COLUMN_NAME_LABEL + "='" + stmt.getLabel() + "' AND " +
                 BudgetStatement.COLUMN_NAME_AMOUNT + "='" + stmt.getAmount() + "'" +
+                BudgetStatement.COLUMN_NAME_FREQUENCY + "='" + stmt.getFrequency() + "'" +
                 BudgetStatement.COLUMN_NAME_NOTES + "='" + stmt.getNotes() + "'";
 
         this.db.delete(this.helper.getMonthTableName(), whereClause, null);
@@ -57,37 +59,81 @@ public class BudgetDataSource {
     public void editStatement(Statement stmt) {
 
         String whereClause = "_id = '" + stmt.getId() + "'";
-        ContentValues values = new ContentValues();
-
-        values.put(BudgetStatement._ID, stmt.getId());
-        values.put(BudgetStatement.COLUMN_NAME_DATE, stmt.getDate());
-        values.put(BudgetStatement.COLUMN_NAME_LABEL, stmt.getLabel());
-        values.put(BudgetStatement.COLUMN_NAME_AMOUNT, stmt.getAmount());
-        values.put(BudgetStatement.COLUMN_NAME_NOTES, stmt.getNotes());
+        ContentValues values = stmt.toContentValues();
 
         this.db.update(this.helper.getMonthTableName(), values, whereClause, null);
     }
 
-    public void addBudgeting(Double currBalance, Double setLimit, Double savings) {
+    public void addBudgeting(Double currBalance, Double setLimit, Double savings, Double amountSpent) {
 
-        ContentValues statement = new ContentValues();
+        ContentValues values = new ContentValues();
 
-        statement.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, currBalance);
-        statement.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, setLimit);
-        statement.put(SavingsStatement.COLUMN_NAME_SAVINGS, savings);
+        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, currBalance);
+        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, setLimit);
+        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, savings);
+        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, amountSpent);
 
-        this.db.insert(this.helper.getSavingsTableName(), null, statement);
+        this.db.insert(this.helper.getSavingsTableName(), null, values);
     }
 
-    public void editBudgeting(Double newBalance, Double newSetLimit, Double newSavings) {
+    public void editBudgeting(Double newBalance, Double newSetLimit, Double newSavings, Double amountSpent) {
 
-        ContentValues statement = new ContentValues();
+        ContentValues values = new ContentValues();
 
-        statement.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
-        statement.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
-        statement.put(SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
+        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
+        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
+        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
+        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, amountSpent);
 
-        this.db.update(this.helper.getSavingsTableName(), statement, null, null);
+        this.db.update(this.helper.getSavingsTableName(), values, null, null);
+    }
+
+    public void editBalance(Double newBalance) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
+        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
+        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
+        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
+
+        this.db.update(this.helper.getSavingsTableName(), values, null, null);
+    }
+
+    public void editSetLimit(Double newSetLimit) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
+        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
+        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
+        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
+
+        this.db.update(this.helper.getSavingsTableName(), values, null, null);
+    }
+
+    public void editSavings(Double newSavings) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
+        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
+        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
+        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
+
+        this.db.update(this.helper.getSavingsTableName(), values, null, null);
+    }
+
+    public void editAmountSpent(Double newAmountSpent) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
+        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
+        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
+        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, newAmountSpent);
+
+        this.db.update(this.helper.getSavingsTableName(), values, null, null);
     }
 
     public List<Statement> getStatements() {
@@ -120,13 +166,98 @@ public class BudgetDataSource {
                         cursor.getString(1), // Date
                         cursor.getString(2), // Label
                         cursor.getDouble(3), // Amount
-                        cursor.getString(4)  // Notes
+                        cursor.getInt(4), // Frequency
+                        cursor.getString(5)  // Notes
                 );
                 statements.add(stmt);
             }
         }
 
         return statements;
+    }
+
+    public double getBalance() {
+
+        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_CURR_BALANCE};
+
+        try (
+                Cursor cursor = this.db.query(
+                        this.helper.getSavingsTableName(),
+                        columnsToRetrieve,
+                        null, null, null, null, null
+                )
+        )
+        {
+            while (cursor.moveToNext()) {
+
+                return cursor.getDouble(1);
+            }
+        }
+
+        return 0.00;
+    }
+
+    public double getSetLimit() {
+
+        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_SET_LIMIT};
+
+        try (
+                Cursor cursor = this.db.query(
+                        this.helper.getSavingsTableName(),
+                        columnsToRetrieve,
+                        null, null, null, null, null
+                )
+        )
+        {
+            while (cursor.moveToNext()) {
+
+                return cursor.getDouble(2);
+            }
+        }
+
+        return 0.00;
+    }
+
+    public double getSavings() {
+
+        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_SAVINGS};
+
+        try (
+                Cursor cursor = this.db.query(
+                        this.helper.getSavingsTableName(),
+                        columnsToRetrieve,
+                        null, null, null, null, null
+                )
+        )
+        {
+            while (cursor.moveToNext()) {
+
+                return cursor.getDouble(3);
+            }
+        }
+
+        return 0.00;
+    }
+
+    public double getAmountSpent() {
+
+        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_AMOUNT_SPENT};
+
+        try (
+                Cursor cursor = this.db.query(
+                        this.helper.getSavingsTableName(),
+                        columnsToRetrieve,
+                        null, null, null, null, null
+                )
+        )
+        {
+            while (cursor.moveToNext()) {
+
+                return cursor.getDouble(4);
+            }
+        }
+
+        return 0.00;
     }
 
     public void close() {

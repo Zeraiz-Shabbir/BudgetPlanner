@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        DBTest.test(MainActivity.this);
+        //DBTest.test(MainActivity.this);
     }
 
     private void updateMonthList() {
