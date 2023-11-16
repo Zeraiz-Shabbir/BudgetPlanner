@@ -3,21 +3,27 @@ package com.example.budgetplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.view.WindowManager;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class AddIncomeExpenseActivity extends AppCompatActivity {
 
     private Spinner numberDropDown;
     private Spinner timeDropDown;
     private CalendarView calendarView;
-
-    // TODO
-    // Fill in logic to correctly handle either adding an expense or an income based on booleans
+    private String monthTableName;
+    private String savingsTableName;
+    private BudgetDataSource ds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +33,11 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         setContentView(R.layout.activity_add_income_expense);
+
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        this.monthTableName = today.getMonth().toString() + today.getYear();
+        this.savingsTableName = monthTableName + "_BUDGETING";
+        this.ds = new BudgetDataSource(AddIncomeExpenseActivity.this, monthTableName, savingsTableName);
 
         // Read the extra parameter to determine income or expense
         Intent intent = getIntent();
@@ -73,6 +84,71 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
             } else if (checkedId == R.id.dateToday) {
                 // Set calendar to gone
                 calendarView.setVisibility(View.GONE);
+            }
+        });
+
+        Button submit = findViewById(R.id.submit);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Statement stmt = new Statement();
+                EditText labelField = findViewById(R.id.labelEditText);
+                EditText amountField = findViewById(R.id.amountEditText);
+                CalendarView dateField = findViewById(R.id.calendar);
+                EditText notesField = null;
+
+                String label = labelField.getText().toString();
+                Double amount = Double.parseDouble(amountField.getText().toString());
+                LocalDate dateObj = Instant.ofEpochMilli(dateField.getDate()).atZone(ZoneId.systemDefault()).toLocalDate();
+                String date = "";
+                //String notes = notesField.getText().toString();
+
+                Intent data = getIntent();
+                boolean isExpense = data.getBooleanExtra("isExpense", false);
+
+                if (isExpense) {
+
+                    //amount *= -1;
+                    double balance = ds.getBalance();
+                    double setLimit = ds.getSetLimit();
+                    // Field for monitoring how much the user has come closer to spending limit
+                    double spentAmt = 0.00;
+
+                    // Expense would negate balance, hence all savings as well
+                    if (balance - amount < 0) {
+
+
+                    }
+                    // Expense would cross the spending limit set previously
+                    else if (setLimit - (spentAmt + amount) < 0) {
+
+
+                    }
+                    // Expense didn't deplete savings or cross spending limit
+                    else {
+
+                        spentAmt += amount;
+                    }
+                }
+
+                int month = dateObj.getMonthValue();
+                int day = dateObj.getDayOfMonth();
+                int year = dateObj.getYear();
+
+                date.concat((month < 10) ? ("0" + month) : String.valueOf(month));
+                date.concat((day < 10) ? ("0" + day) : String.valueOf(day));
+                date.concat(String.valueOf(year));
+
+                stmt.setDate(date);
+                stmt.setLabel(label);
+                stmt.setAmount(amount);
+                stmt.setNotes(null);
+
+                long id = ds.addStatement(stmt);
+                stmt.setId(id);
+
+                finish();
             }
         });
     }

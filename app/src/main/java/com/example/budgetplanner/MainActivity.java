@@ -23,14 +23,9 @@ public class MainActivity extends AppCompatActivity {
     private MonthAdapter adapter;
     private List<MonthItem> monthList;
 
-    // TODO
-    // Create new method (?) to save MonthItems to database
-    // As it is right now, recyclerViews reset after each relaunch of app, only remembering the current month
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -40,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         monthList = new ArrayList<>();
         updateMonthList();
 
-        adapter = new MonthAdapter(this, monthList);
+        adapter = new MonthAdapter(monthList);
         recyclerView.setAdapter(adapter);
 
         // Check for month change and update RecyclerView
@@ -115,5 +110,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }, oneMinute);
     }
+
+
 
 }

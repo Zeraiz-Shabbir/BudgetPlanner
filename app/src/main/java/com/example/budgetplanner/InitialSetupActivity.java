@@ -85,6 +85,7 @@ public class InitialSetupActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(InitialSetupActivity.this, AddIncomeExpenseActivity.class);
                     intent.putExtra("isIncome", true);
+                    intent.putExtra("isPayment", false);
                     startActivity(intent);
                 }
             });
@@ -94,6 +95,7 @@ public class InitialSetupActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(InitialSetupActivity.this, AddIncomeExpenseActivity.class);
                     intent.putExtra("isIncome", false);
+                    intent.putExtra("isPayment", true);
                     startActivity(intent);
                 }
             });

@@ -16,6 +16,9 @@
             android:name=".MonthlyStatementInformationActivity"
             android:exported="false" />
         <activity
+            android:name=".ShowWarningActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddIncomeExpenseActivity"
             android:exported="false" />
         <activity

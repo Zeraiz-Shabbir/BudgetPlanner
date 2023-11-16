@@ -1,0 +1,74 @@
+<!-- res/layout/savings_and_spending_progress.xml -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/savings_progress"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:layout_marginBottom="8dp"/>
+
+    <ProgressBar
+        android:id="@+id/savings_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:max="100"
+        android:progress="60"
+        android:progressTint="#00796B"
+        android:progressBackgroundTint="#BDBDBD"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/spending_progress"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:layout_marginBottom="16dp"/>
+
+    <ProgressBar
+        android:id="@+id/spending_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:max="100"
+        android:progress="30"
+        android:progressTint="#F44336"
+        android:progressBackgroundTint="#BDBDBD"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Button for entering savings amount -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/savings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_savings_amount"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#00796B"
+
+        android:iconTint="#FFFFFF"
+        android:padding="16dp"
+        android:layout_gravity="center"/>
+
+    <!-- Button for setting spending limit -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/limit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set_spending_limit"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#F44336"
+
+        android:iconTint="#FFFFFF"
+        android:padding="16dp"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

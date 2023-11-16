@@ -1,0 +1,52 @@
+<!-- res/layout/savings_warning_popup.xml -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/warning_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Warning"
+        android:textSize="20sp"
+        android:textColor="#FF0000"
+        android:gravity="center"
+        android:padding="10dp" />
+
+    <TextView
+        android:id="@+id/warning_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/you_have_depleted_your_savings_remove_saving"
+        android:padding="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/yes_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Yes"
+            android:background="#FF0000"
+            android:textColor="#FFFFFF"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/no_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="No"
+            android:background="#00FF00"
+            android:textColor="#000000"
+            android:padding="8dp" />
+    </LinearLayout>
+</LinearLayout>
