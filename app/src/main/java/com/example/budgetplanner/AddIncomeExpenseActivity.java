@@ -1,5 +1,6 @@
 package com.example.budgetplanner;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -113,17 +114,40 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                     double balance = ds.getBalance();
                     double setLimit = ds.getSetLimit();
                     // Field for monitoring how much the user has come closer to spending limit
-                    double spentAmt = 0.00;
+                    final boolean[] cancelpayment = {false};
+
+                    double spentAmt = ds.getAmountSpent();
 
                     // Expense would negate balance, hence all savings as well
                     if (balance - amount < 0) {
-
+                        WarningDialogManager.showSavingDepletedDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                cancelpayment[0] = true;
+                                finish();
+                                dialog.dismiss();
+                            }
+                        });
 
                     }
                     // Expense would cross the spending limit set previously
                     else if (setLimit - (spentAmt + amount) < 0) {
+                        WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                cancelpayment[0] = true;
+                                finish();
+                                dialog.dismiss();
+                            }
+                        });
 
+                        WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
 
+                                finish();
+                            }
+                        });
                     }
                     // Expense didn't deplete savings or cross spending limit
                     else {

@@ -8,7 +8,7 @@
     <string name="spending_progress">Spending Progress</string>
     <string name="enter_savings_amount">Enter Savings Amount</string>
     <string name="set_spending_limit">Set Spending Limit</string>
-    <string name="you_have_depleted_your_savings_remove_saving">You have depleted your savings! Remove saving?</string>
+    <string name="you_have_depleted_your_savings_remove_saving">You have depleted your savings! Remove payment?</string>
     <string name="show_warning">Show Warning</string>
     <string name="add_expense">Add Expense</string>
     <string name="add_income">Add Income</string>

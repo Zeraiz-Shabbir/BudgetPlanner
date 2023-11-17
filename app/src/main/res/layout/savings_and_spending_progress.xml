@@ -10,13 +10,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/savings_progress"
-        android:textSize="18sp"
         android:textColor="#333333"
-        android:layout_marginBottom="8dp"/>
+        android:textSize="18sp" />
 
     <ProgressBar
-        android:id="@+id/savings_progress"
+        android:id="@+id/savings_progress_test"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="10dp"
@@ -35,7 +35,7 @@
         android:layout_marginBottom="16dp"/>
 
     <ProgressBar
-        android:id="@+id/spending_progress"
+        android:id="@+id/spending_progress_test"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="10dp"
@@ -47,7 +47,7 @@
 
     <!-- Button for entering savings amount -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/savings_button"
+        android:id="@+id/savings_button_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/enter_savings_amount"
@@ -60,7 +60,7 @@
 
     <!-- Button for setting spending limit -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/limit_button"
+        android:id="@+id/limit_button_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/set_spending_limit"
