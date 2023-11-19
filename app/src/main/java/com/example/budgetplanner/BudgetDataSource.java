@@ -19,6 +19,7 @@ import java.util.List;
  * @version 4.0
  * @since 11/2/23
  */
+
 public class BudgetDataSource {
 
     // Variable(s)
@@ -26,38 +27,34 @@ public class BudgetDataSource {
     private BudgetDBHelper helper;
 
     public BudgetDataSource(Context context, String monthTableName, String savingsTableName) {
-
         this.helper = new BudgetDBHelper(context, monthTableName, savingsTableName);
         this.db = this.helper.getWritableDatabase();
     }
 
     public long addStatement(Statement stmt) {
-
         ContentValues values = new ContentValues();
 
-        values.put(BudgetStatement.COLUMN_NAME_DATE, stmt.getDate());
-        values.put(BudgetStatement.COLUMN_NAME_LABEL, stmt.getLabel());
-        values.put(BudgetStatement.COLUMN_NAME_AMOUNT, stmt.getAmount());
-        values.put(BudgetStatement.COLUMN_NAME_FREQUENCY, stmt.getFrequency());
-        values.put(BudgetStatement.COLUMN_NAME_NOTES, stmt.getNotes());
+        values.put(BudgetContract.BudgetStatement.COLUMN_NAME_DATE, stmt.getDate());
+        values.put(BudgetContract.BudgetStatement.COLUMN_NAME_LABEL, stmt.getLabel());
+        values.put(BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT, stmt.getAmount());
+        values.put(BudgetContract.BudgetStatement.COLUMN_NAME_FREQUENCY, stmt.getFrequency());
+        values.put(BudgetContract.BudgetStatement.COLUMN_NAME_NOTES, stmt.getNotes());
 
         return this.db.insert(this.helper.getMonthTableName(), null, values);
     }
 
     public void removeStatement(Statement stmt) {
-
-        String whereClause = BudgetStatement._ID + "='" + stmt.getId() + "' AND " +
-                BudgetStatement.COLUMN_NAME_DATE + "='" + stmt.getDate() + "' AND " +
-                BudgetStatement.COLUMN_NAME_LABEL + "='" + stmt.getLabel() + "' AND " +
-                BudgetStatement.COLUMN_NAME_AMOUNT + "='" + stmt.getAmount() + "'" +
-                BudgetStatement.COLUMN_NAME_FREQUENCY + "='" + stmt.getFrequency() + "'" +
-                BudgetStatement.COLUMN_NAME_NOTES + "='" + stmt.getNotes() + "'";
+        String whereClause = BudgetContract.BudgetStatement._ID + "='" + stmt.getId() + "' AND " +
+                BudgetContract.BudgetStatement.COLUMN_NAME_DATE + "='" + stmt.getDate() + "' AND " +
+                BudgetContract.BudgetStatement.COLUMN_NAME_LABEL + "='" + stmt.getLabel() + "' AND " +
+                BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT + "='" + stmt.getAmount() + "'" +
+                BudgetContract.BudgetStatement.COLUMN_NAME_FREQUENCY + "='" + stmt.getFrequency() + "'" +
+                BudgetContract.BudgetStatement.COLUMN_NAME_NOTES + "='" + stmt.getNotes() + "'";
 
         this.db.delete(this.helper.getMonthTableName(), whereClause, null);
     }
 
     public void editStatement(Statement stmt) {
-
         String whereClause = "_id = '" + stmt.getId() + "'";
         ContentValues values = stmt.toContentValues();
 
@@ -65,90 +62,84 @@ public class BudgetDataSource {
     }
 
     public void addBudgeting(Double currBalance, Double setLimit, Double savings, Double amountSpent) {
-
         ContentValues values = new ContentValues();
 
-        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, currBalance);
-        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, setLimit);
-        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, savings);
-        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, amountSpent);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, currBalance);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, setLimit);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, savings);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, amountSpent);
 
         this.db.insert(this.helper.getSavingsTableName(), null, values);
     }
 
     public void editBudgeting(Double newBalance, Double newSetLimit, Double newSavings, Double amountSpent) {
-
         ContentValues values = new ContentValues();
 
-        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
-        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
-        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
-        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, amountSpent);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, amountSpent);
 
         this.db.update(this.helper.getSavingsTableName(), values, null, null);
     }
 
     public void editBalance(Double newBalance) {
-
         ContentValues values = new ContentValues();
 
-        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
-        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
-        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
-        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, newBalance);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
 
         this.db.update(this.helper.getSavingsTableName(), values, null, null);
     }
 
     public void editSetLimit(Double newSetLimit) {
-
         ContentValues values = new ContentValues();
 
-        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
-        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
-        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
-        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, newSetLimit);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
 
         this.db.update(this.helper.getSavingsTableName(), values, null, null);
     }
 
     public void editSavings(Double newSavings) {
-
         ContentValues values = new ContentValues();
 
-        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
-        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
-        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
-        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, newSavings);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, getAmountSpent());
 
         this.db.update(this.helper.getSavingsTableName(), values, null, null);
     }
 
     public void editAmountSpent(Double newAmountSpent) {
-
         ContentValues values = new ContentValues();
 
-        values.put(SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
-        values.put(SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
-        values.put(SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
-        values.put(SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, newAmountSpent);
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE, getBalance());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT, getSetLimit());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS, getSavings());
+        values.put(SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT, newAmountSpent);
 
         this.db.update(this.helper.getSavingsTableName(), values, null, null);
     }
 
     public List<Statement> getStatements() {
-
         List<Statement> statements = new LinkedList<>();
         Statement stmt = null;
 
         String[] columnsToRetrieve = {
-                BudgetStatement.COLUMN_NAME_DATE,
-                BudgetStatement.COLUMN_NAME_LABEL,
-                BudgetStatement.COLUMN_NAME_AMOUNT,
-                BudgetStatement.COLUMN_NAME_NOTES
+                BudgetContract.BudgetStatement.COLUMN_NAME_DATE,
+                BudgetContract.BudgetStatement.COLUMN_NAME_LABEL,
+                BudgetContract.BudgetStatement.COLUMN_NAME_AMOUNT,
+                BudgetContract.BudgetStatement.COLUMN_NAME_FREQUENCY,
+                BudgetContract.BudgetStatement.COLUMN_NAME_NOTES
         };
 
-        String sortOrder = BudgetStatement._ID + " DESC";
+        String sortOrder = BudgetContract.BudgetStatement._ID + " DESC";
 
         try (
                 Cursor cursor = this.db.query(
@@ -160,13 +151,12 @@ public class BudgetDataSource {
         )
         {
             while (cursor.moveToNext()) {
-
                 stmt = new Statement(
                         cursor.getLong(0),   // ID
                         cursor.getString(1), // Date
                         cursor.getString(2), // Label
                         cursor.getDouble(3), // Amount
-                        cursor.getInt(4), // Frequency
+                        cursor.getInt(4),    // Frequency
                         cursor.getString(5)  // Notes
                 );
                 statements.add(stmt);
@@ -177,8 +167,7 @@ public class BudgetDataSource {
     }
 
     public double getBalance() {
-
-        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_CURR_BALANCE};
+        String[] columnsToRetrieve = {SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE};
 
         try (
                 Cursor cursor = this.db.query(
@@ -189,8 +178,7 @@ public class BudgetDataSource {
         )
         {
             while (cursor.moveToNext()) {
-
-                return cursor.getDouble(1);
+                return cursor.getDouble(cursor.getColumnIndexOrThrow(SavingsContract.SavingsStatement.COLUMN_NAME_CURR_BALANCE));
             }
         }
 
@@ -198,8 +186,7 @@ public class BudgetDataSource {
     }
 
     public double getSetLimit() {
-
-        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_SET_LIMIT};
+        String[] columnsToRetrieve = {SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT};
 
         try (
                 Cursor cursor = this.db.query(
@@ -210,8 +197,7 @@ public class BudgetDataSource {
         )
         {
             while (cursor.moveToNext()) {
-
-                return cursor.getDouble(2);
+                return cursor.getDouble(cursor.getColumnIndexOrThrow(SavingsContract.SavingsStatement.COLUMN_NAME_SET_LIMIT));
             }
         }
 
@@ -219,8 +205,7 @@ public class BudgetDataSource {
     }
 
     public double getSavings() {
-
-        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_SAVINGS};
+        String[] columnsToRetrieve = {SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS};
 
         try (
                 Cursor cursor = this.db.query(
@@ -231,8 +216,7 @@ public class BudgetDataSource {
         )
         {
             while (cursor.moveToNext()) {
-
-                return cursor.getDouble(3);
+                return cursor.getDouble(cursor.getColumnIndexOrThrow(SavingsContract.SavingsStatement.COLUMN_NAME_SAVINGS));
             }
         }
 
@@ -240,8 +224,7 @@ public class BudgetDataSource {
     }
 
     public double getAmountSpent() {
-
-        String[] columnsToRetrieve = {SavingsStatement.COLUMN_NAME_AMOUNT_SPENT};
+        String[] columnsToRetrieve = {SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT};
 
         try (
                 Cursor cursor = this.db.query(
@@ -252,8 +235,7 @@ public class BudgetDataSource {
         )
         {
             while (cursor.moveToNext()) {
-
-                return cursor.getDouble(4);
+                return cursor.getDouble(cursor.getColumnIndexOrThrow(SavingsContract.SavingsStatement.COLUMN_NAME_AMOUNT_SPENT));
             }
         }
 
@@ -261,8 +243,8 @@ public class BudgetDataSource {
     }
 
     public void close() {
-
         db.close();
         this.helper.close();
     }
 }
+
