@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".BudgetingActivity">
 
+
     <ProgressBar
         android:id="@+id/current_saving_bar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -33,6 +34,7 @@
         android:layout_marginStart="43dp"
         android:layout_marginTop="75dp"
         android:text="@string/savings"
+        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_limit_bar" />
 
@@ -43,6 +45,7 @@
         android:layout_marginStart="43dp"
         android:layout_marginTop="50dp"
         android:text="@string/set_limit"
+        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saving_button" />
 

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#2196F3</color> <!-- Deep Blue -->
+    <color name="colorPrimaryDark">#1565C0</color> <!-- Dark Blue -->
+    <color name="colorAccent">#FF4081</color> <!-- Pink -->
+
+    <!-- Additional Colors -->
+    <color name="backgroundColor">#FFFFFF</color> <!-- White -->
+    <color name="buttonColor">#4CAF50</color> <!-- Green -->
+    <color name="textColorPrimary">#212121</color> <!-- Dark Text -->
+    <color name="textColorSecondary">#757575</color> <!-- Light Text -->
 </resources>

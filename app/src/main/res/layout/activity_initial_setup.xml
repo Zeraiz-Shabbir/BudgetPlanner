@@ -18,7 +18,7 @@
         app:icon="@mipmap/add_payment_background"
         app:iconPadding="0dp"
         app:iconSize="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialAddIncome" />
 
@@ -34,7 +34,7 @@
         app:icon="@mipmap/add_income_background"
         app:iconPadding="0dp"
         app:iconSize="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialBudgeting" />
 
@@ -50,7 +50,7 @@
         app:icon="@mipmap/budgeting_background"
         app:iconPadding="0dp"
         app:iconSize="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/balanceStart" />
 
@@ -85,7 +85,7 @@
         android:layout_marginTop="14dp"
         android:layout_marginEnd="130dp"
         android:text="@string/submit"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialAddExpense" />
 
