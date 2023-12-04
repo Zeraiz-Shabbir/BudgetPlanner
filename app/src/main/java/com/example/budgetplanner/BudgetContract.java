@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
  * @version 2.0
  * @since 11/2/23
  */
+@Deprecated
 public final class BudgetContract {
 
     // Table name
@@ -33,7 +34,7 @@ public final class BudgetContract {
                 BudgetStatement.COLUMN_NAME_DATE + " TEXT," +
                 BudgetStatement.COLUMN_NAME_LABEL + " TEXT," +
                 BudgetStatement.COLUMN_NAME_AMOUNT + " REAL," +
-                BudgetStatement.COLUMN_NAME_FREQUENCY + "INTEGER," +
+                BudgetStatement.COLUMN_NAME_FREQUENCY + " INTEGER," +
                 BudgetStatement.COLUMN_NAME_NOTES + " TEXT)");
         setSqlDeleteStatements("DROP TABLE IF EXISTS " + this.tableName);
     }

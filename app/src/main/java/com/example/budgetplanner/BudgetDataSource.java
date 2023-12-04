@@ -19,6 +19,7 @@ import java.util.List;
  * @version 4.0
  * @since 11/2/23
  */
+@Deprecated
 public class BudgetDataSource {
 
     // Variable(s)
