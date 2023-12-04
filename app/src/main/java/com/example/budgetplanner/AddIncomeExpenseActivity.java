@@ -21,8 +21,6 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
     private Spinner numberDropDown;
     private Spinner timeDropDown;
     private CalendarView calendarView;
-    private String monthTableName;
-    private String savingsTableName;
     private BudgetDataSource ds;
 
     @Override
@@ -31,13 +29,14 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_income_expense);
 
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
-        this.monthTableName = today.getMonth().toString() + today.getYear();
-        this.savingsTableName = monthTableName + "_BUDGETING";
+        String monthTableName = today.getMonth().toString() + today.getYear();
+        String savingsTableName = monthTableName + "_BUDGETING";
         this.ds = new BudgetDataSource(AddIncomeExpenseActivity.this, monthTableName, savingsTableName);
 
         // Read the extra parameter to determine income or expense
         Intent intent = getIntent();
-        boolean isIncome = intent.getBooleanExtra("isIncome", false);
+        boolean isIncome = intent.getBooleanExtra(InitialSetupActivity.INTENT_ISINCOME_NAME, false);
+        boolean isPayment = intent.getBooleanExtra(InitialSetupActivity.INTENT_ISEXPENSE_NAME, false);
 
         if (isIncome) {
             // Customize UI and behavior for adding income
@@ -102,19 +101,17 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
 
                 Intent data = getIntent();
                 boolean isExpense = data.getBooleanExtra("isExpense", false);
+                final boolean[] cancelpayment = {false};
+                double balance = ds.getBalance();
+                double setLimit = ds.getSetLimit();
+                // Field for monitoring how much the user has come closer to spending limit
+                double spentAmt = ds.getAmountSpent();
+                double minAmtToSave = ds.getSavings();
 
                 if (isExpense) {
 
-                    //amount *= -1;
-                    double balance = ds.getBalance();
-                    double setLimit = ds.getSetLimit();
-                    // Field for monitoring how much the user has come closer to spending limit
-                    final boolean[] cancelpayment = {false};
-
-                    double spentAmt = ds.getAmountSpent();
-
                     // Expense would negate balance, hence all savings as well
-                    if (balance - amount < 0) {
+                    if (balance < amount) {
                         WarningDialogManager.showSavingDepletedDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
@@ -123,10 +120,9 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                                 dialog.dismiss();
                             }
                         });
-
                     }
                     // Expense would cross the spending limit set previously
-                    else if (setLimit - (spentAmt + amount) < 0) {
+                    else if (setLimit < (spentAmt + amount)) {
                         WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
@@ -135,20 +131,25 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                                 dialog.dismiss();
                             }
                         });
-
-                        WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                finish();
-                            }
-                        });
                     }
                     // Expense didn't deplete savings or cross spending limit
                     else {
 
                         spentAmt += amount;
+                        balance -= amount;
+                        ds.editAmountSpent(spentAmt);
+                        ds.editBalance(balance);
                     }
+                }
+                else if (isIncome) {
+
+                    balance += amount;
+                    ds.editBalance(balance);
+                }
+
+                if (!cancelpayment[0]) {
+
+
                 }
 
                 int month = dateObj.getMonthValue();

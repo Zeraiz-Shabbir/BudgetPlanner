@@ -1,0 +1,259 @@
+package com.example.budgetplanner.database;
+
+import static com.example.budgetplanner.database.DatabaseContract.BudgetingEntry;
+import static com.example.budgetplanner.database.DatabaseContract.RecurringStatementEntry;
+import static com.example.budgetplanner.database.DatabaseContract.StatementEntry;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+
+final class DatabaseManager {
+
+    public static final String DATABASE_NAME = "budgetPlanner.db";
+    private DatabaseHelper helper;
+    private SQLiteDatabase database;
+    private List<Statement> statements;
+    private List<RecurringStatement> recurringStatements;
+    private Budgeting budgeting;
+
+    public DatabaseManager(@Nullable Context context, int databaseVersion, @Nullable String recurringStatementTableName, @Nullable String statementTableName) {
+        this.helper = new DatabaseHelper(context, DATABASE_NAME, databaseVersion, recurringStatementTableName, statementTableName);
+        this.database = this.helper.getWritableDatabase();
+        this.statements = new ArrayList<Statement>();
+        this.recurringStatements = new ArrayList<RecurringStatement>();
+        this.budgeting = new Budgeting();
+        this.readStatements();
+        this.readRecurringStatements();
+        this.readBudgeting();
+    }
+
+    public void save() {
+        int currVersion = this.database.getVersion();
+        this.helper.onUpgrade(this.database, currVersion, currVersion + 1);
+        this.database.beginTransaction();
+        this.database.insertOrThrow(this.helper.getBudgetingTableName(), null, Utils.toContentValues(this.budgeting));
+        for (RecurringStatement recurringStatement : this.recurringStatements) {
+            this.database.insertOrThrow(this.helper.getRecurringStatementTableName(), null, Utils.toContentValues(recurringStatement));
+        }
+        for (Statement statement : this.statements) {
+            this.database.insertOrThrow(this.helper.getStatementTableName(), null, Utils.toContentValues(statement));
+        }
+        this.database.endTransaction();
+    }
+
+    public void close() {
+        this.save();
+        this.database.close();
+        this.helper.close();
+    }
+
+    public void changeTable(String newStatementTableName) {
+        this.save();
+        this.helper.changeTable(newStatementTableName);
+        this.database.close();
+        this.database = this.helper.getWritableDatabase();
+        this.readStatements();
+        this.readRecurringStatements();
+        this.readBudgeting();
+    }
+
+    private void readStatements() {
+        Statement statement = new Statement();
+        String[] projection = {
+                StatementEntry.COLUMN_SID,
+                StatementEntry.COLUMN_DATE,
+                StatementEntry.COLUMN_LABEL,
+                StatementEntry.COLUMN_AMOUNT,
+                StatementEntry.COLUMN_NOTES,
+                StatementEntry.COLUMN_EXPENSE
+        };
+        String sortOrder = StatementEntry.COLUMN_DATE + " DESC";
+        try (Cursor cursor = this.database.query(
+                this.helper.getStatementTableName(),
+                projection,
+                null, null, null, null,
+                sortOrder
+        )) {
+            if (cursor.getCount() == 0) {
+                return;
+            }
+            while (cursor.moveToNext()) {
+                statement.setStatementID(cursor.getLong(cursor.getColumnIndexOrThrow(projection[0])));
+                statement.setDate(cursor.getString(cursor.getColumnIndexOrThrow(projection[1])));
+                statement.setLabel(cursor.getString(cursor.getColumnIndexOrThrow(projection[2])));
+                statement.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[3])));
+                statement.setNotes(cursor.getString(cursor.getColumnIndexOrThrow(projection[4])));
+                statement.setExpense(cursor.getInt(cursor.getColumnIndexOrThrow(projection[5])) == 1);
+                if (!this.statements.add(statement)) {
+                    throw new RuntimeException("Statement " + statement + " was not retrieved due to unknown reasons");
+                }
+            }
+        }
+    }
+
+    private void readRecurringStatements() {
+        RecurringStatement statement = new RecurringStatement();
+        String[] projection = {
+                RecurringStatementEntry.COLUMN_SID,
+                RecurringStatementEntry.COLUMN_DATE,
+                RecurringStatementEntry.COLUMN_LABEL,
+                RecurringStatementEntry.COLUMN_AMOUNT,
+                RecurringStatementEntry.COLUMN_NOTES,
+                RecurringStatementEntry.COLUMN_EXPENSE,
+                RecurringStatementEntry.COLUMN_FREQUENCY
+        };
+        String sortOrder = RecurringStatementEntry.COLUMN_DATE + " DESC";
+        try (Cursor cursor = this.database.query(
+                this.helper.getRecurringStatementTableName(),
+                projection,
+                null, null, null, null,
+                sortOrder
+        )) {
+            if (cursor.getCount() == 0) {
+                return;
+            }
+            while (cursor.moveToNext()) {
+                statement.setStatementID(cursor.getLong(cursor.getColumnIndexOrThrow(projection[0])));
+                statement.setDate(cursor.getString(cursor.getColumnIndexOrThrow(projection[1])));
+                statement.setLabel(cursor.getString(cursor.getColumnIndexOrThrow(projection[2])));
+                statement.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[3])));
+                statement.setNotes(cursor.getString(cursor.getColumnIndexOrThrow(projection[4])));
+                statement.setExpense(cursor.getInt(cursor.getColumnIndexOrThrow(projection[5])) == 1);
+                statement.setFrequencyInDays(cursor.getInt(cursor.getColumnIndexOrThrow(projection[6])));
+                if (!this.recurringStatements.add(statement)) {
+                    throw new RuntimeException("Statement " + statement + " was not retrieved due to unknown reasons");
+                }
+            }
+        }
+    }
+
+    private void readBudgeting() {
+        String[] projection = {
+                BudgetingEntry.COLUMN_BALANCE,
+                BudgetingEntry.COLUMN_AMOUNT_SPENT,
+                BudgetingEntry.COLUMN_SPENDING_LIMIT,
+                BudgetingEntry.COLUMN_SAVING_LIMIT
+        };
+        try (Cursor cursor = this.database.query(
+                this.helper.getBudgetingTableName(),
+                projection,
+                null, null, null, null, null
+        )) {
+            if (cursor.getCount() == 0) {
+                return;
+            }
+            while (cursor.moveToNext()) {
+                this.budgeting.setBalance(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[0])));
+                this.budgeting.setAmountSpent(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[1])));
+                this.budgeting.setSpendingLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[2])));
+                this.budgeting.setSavingLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[3])));
+            }
+        }
+    }
+
+    public boolean insertStatement(Statement statement) {
+        return this.statements.add(statement);
+    }
+
+    public boolean deleteStatement(Statement statement) {
+        return this.statements.remove(statement);
+    }
+
+    public boolean updateStatement(Statement newStatement) {
+        int index;
+        Statement oldStatement = null;
+        for (index = 0; index < this.statements.size(); index++) {
+            if (this.statements.get(index).getStatementID() == newStatement.getStatementID()) {
+                oldStatement = this.statements.get(index);
+                break;
+            }
+        }
+        if (oldStatement == null) return true;
+        return (this.statements.set(index, newStatement) == oldStatement);
+    }
+
+    public boolean insertRecurringStatement(RecurringStatement recurringStatement) {
+        return this.recurringStatements.add(recurringStatement);
+    }
+
+    public boolean deleteRecurringStatement(RecurringStatement recurringStatement) {
+        return this.recurringStatements.remove(recurringStatement);
+    }
+
+    public boolean updateRecurringStatement(RecurringStatement newRecurringStatement) {
+        int index;
+        RecurringStatement oldRecurringStatement = null;
+        for (index = 0; index < this.recurringStatements.size(); index++) {
+            if (this.recurringStatements.get(index).getStatementID() == newRecurringStatement.getStatementID()) {
+                oldRecurringStatement = this.recurringStatements.get(index);
+                break;
+            }
+        }
+        if (oldRecurringStatement == null) return true;
+        return (this.recurringStatements.set(index, newRecurringStatement) == oldRecurringStatement);
+    }
+
+    public double setBalance(double newBalance) {
+        double oldBalance = this.budgeting.getBalance();
+        this.budgeting.setBalance(newBalance);
+        return oldBalance;
+    }
+
+    public double setAmountSpent(double newAmountSpent) {
+        double oldAmountSpent = this.budgeting.getAmountSpent();
+        this.budgeting.setBalance(newAmountSpent);
+        return oldAmountSpent;
+    }
+
+    public double setSpendingLimit(double newSpendingLimit) {
+        double oldSpendingLimit = this.budgeting.getSpendingLimit();
+        this.budgeting.setSpendingLimit(newSpendingLimit);
+        return oldSpendingLimit;
+    }
+
+    public double setSavingLimit(double newSavingLimit) {
+        double oldSavingLimit = this.budgeting.getSavingLimit();
+        this.budgeting.setSavingLimit(newSavingLimit);
+        return oldSavingLimit;
+    }
+
+    public Statement getStatement(long sid) {
+        Statement statement = null;
+        for (int index = 0; index < this.statements.size(); index++) {
+            if (this.statements.get(index).getStatementID() == sid) {
+                statement = this.statements.get(index);
+                break;
+            }
+        }
+        return statement;
+    }
+
+    public RecurringStatement getRecurringStatement(long sid) {
+        RecurringStatement recurringStatement = null;
+        for (int index = 0; index < this.recurringStatements.size(); index++) {
+            if (this.recurringStatements.get(index).getStatementID() == sid) {
+                recurringStatement = this.recurringStatements.get(index);
+                break;
+            }
+        }
+        return recurringStatement;
+    }
+
+    public List<Statement> getStatements() {
+        return this.statements;
+    }
+
+    public List<RecurringStatement> getRecurringStatements() {
+        return this.recurringStatements;
+    }
+
+    public Budgeting getBudgeting() {
+        return this.budgeting;
+    }
+}

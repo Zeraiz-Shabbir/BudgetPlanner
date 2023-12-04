@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
  * @version 3.0
  * @since 11/4/23
  */
+@Deprecated
 public class SavingsContract {
 
     // Table name

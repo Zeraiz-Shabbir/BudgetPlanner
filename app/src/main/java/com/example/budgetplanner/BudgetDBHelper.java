@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
  * @version 2.0
  * @since 11/2/23
  */
+@Deprecated
 public class BudgetDBHelper extends SQLiteOpenHelper {
 
     // Constant(s)
