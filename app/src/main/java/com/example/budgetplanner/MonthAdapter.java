@@ -1,5 +1,7 @@
 package com.example.budgetplanner;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,12 @@ import java.util.List;
 
 public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.MonthViewHolder> {
     private List<MonthItem> monthList;
+    private Context context;
+
+    public MonthAdapter(Context context, List<MonthItem> monthList) {
+        this.context = context;
+        this.monthList = monthList;
+    }
 
     public MonthAdapter(List<MonthItem> monthList) {
         this.monthList = monthList;
@@ -28,6 +36,23 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.MonthViewHol
     public void onBindViewHolder(@NonNull MonthViewHolder holder, int position) {
         MonthItem currentItem = monthList.get(position);
         holder.monthTextView.setText(currentItem.getMonthName() + " " + currentItem.getYear());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Get the selected month and year
+                String selectedMonth = currentItem.getMonthName();
+                int selectedYear = currentItem.getYear();
+
+                // Create an intent to start MonthlyStatementInformationActivity
+                Intent intent = new Intent(context, MonthlyStatementInformationActivity.class);
+                intent.putExtra("month", selectedMonth);
+                intent.putExtra("year", selectedYear);
+
+                // Start the activity
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,7 +51,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        //DBTest.test(MainActivity.this);
+        // Set a click listener for the "Exit" button
+        Button exitButton = findViewById(R.id.exit);
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Finish the activity and exit the app
+            }
+        });
+
     }
 
     private void updateMonthList() {

@@ -11,6 +11,7 @@ import static com.example.budgetplanner.BudgetContract.BudgetStatement;
  * @version 1.0
  * @since 11/5/23
  */
+@Deprecated
 public class Statement {
 
     private Long id;

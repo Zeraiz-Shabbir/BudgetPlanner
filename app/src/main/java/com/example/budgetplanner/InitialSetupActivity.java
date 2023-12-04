@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -14,9 +15,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class InitialSetupActivity extends AppCompatActivity {
 
+    static final String INTENT_ISEXPENSE_NAME = "isExpense";
+    static final String INTENT_ISINCOME_NAME = "isIncome";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // hide keyboard by default so it doesn't automatically focus on EditTexts
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         // Check if the initial setup has already been completed
         SharedPreferences preferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
@@ -26,7 +33,8 @@ public class InitialSetupActivity extends AppCompatActivity {
             // The initial setup has already been completed, so go to the main page
             startActivity(new Intent(this, MainActivity.class));
             finish(); // Finish this activity so the user cannot go back to it
-        } else {
+        }
+        else {
             // The initial setup is not completed, show the initial setup screen
             setContentView(R.layout.activity_initial_setup);
 
@@ -79,8 +87,8 @@ public class InitialSetupActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(InitialSetupActivity.this, AddIncomeExpenseActivity.class);
-                    intent.putExtra("isIncome", true);
-                    intent.putExtra("isPayment", false);
+                    intent.putExtra(INTENT_ISEXPENSE_NAME, false);
+                    intent.putExtra(INTENT_ISINCOME_NAME, true);
                     startActivity(intent);
                 }
             });
@@ -89,8 +97,8 @@ public class InitialSetupActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(InitialSetupActivity.this, AddIncomeExpenseActivity.class);
-                    intent.putExtra("isIncome", false);
-                    intent.putExtra("isPayment", true);
+                    intent.putExtra(INTENT_ISEXPENSE_NAME, true);
+                    intent.putExtra(INTENT_ISINCOME_NAME, false);
                     startActivity(intent);
                 }
             });

@@ -9,6 +9,7 @@ import android.content.Context;
  * @version 1.0
  * @since 11/5/23
  */
+@Deprecated
 final class DBTest {
 
     public static void test(Context context) {
