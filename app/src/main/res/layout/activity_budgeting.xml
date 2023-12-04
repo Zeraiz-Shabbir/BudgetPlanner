@@ -67,42 +67,5 @@
         app:layout_constraintBottom_toTopOf="@+id/current_limit_bar"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/saving_amount"
-        android:layout_width="223dp"
-        android:layout_height="37dp"
-        android:layout_marginTop="119dp"
-        android:layout_marginEnd="12dp"
-        android:ems="10"
-        android:hint="Enter the amount you want to save"
-        android:inputType="text"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_limit_bar" />
-
-    <EditText
-        android:id="@+id/set_limit_amount"
-        android:layout_width="223dp"
-        android:layout_height="37dp"
-        android:layout_marginTop="141dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="Enter the max amount you want to set"
-        android:inputType="text"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/saving_amount" />
-
-    <Button
-        android:id="@+id/submit_budgeting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/submit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/set_limit_amount" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

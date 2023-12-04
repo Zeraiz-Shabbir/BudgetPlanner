@@ -1,18 +1,13 @@
 package com.example.budgetplanner;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
+import android.widget.Button;
 
 public class BudgetingActivity extends AppCompatActivity {
 
@@ -21,13 +16,12 @@ public class BudgetingActivity extends AppCompatActivity {
     private BudgetDataSource ds;
     private ProgressBar currentSavingBar;
     private ProgressBar currentLimitBar;
-    private EditText savingAmountEditText;
-    private EditText setLimitAmountEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budgeting);
+
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
         this.monthTableName = today.getMonth().toString() + today.getYear();
         this.savingsTableName = monthTableName + "_BUDGETING";
@@ -37,54 +31,6 @@ public class BudgetingActivity extends AppCompatActivity {
         Button setLimitButton = findViewById(R.id.set_limit_button);
         currentSavingBar = findViewById(R.id.current_saving_bar);
         currentLimitBar = findViewById(R.id.current_limit_bar);
-        savingAmountEditText = findViewById(R.id.saving_amount);
-        setLimitAmountEditText = findViewById(R.id.set_limit_amount);
-        Button submitButton = findViewById(R.id.submit_budgeting);
-
-        savingAmountEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                submitButton.setEnabled(false);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                submitButton.setEnabled(true);
-            }
-        });
-
-        setLimitAmountEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                submitButton.setEnabled(false);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                submitButton.setEnabled(true);
-            }
-        });
-
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                double saving = Double.parseDouble(savingAmountEditText.getText().toString());
-                double spending_limit = Double.parseDouble(setLimitAmountEditText.getText().toString());
-                ds.editSavings(saving);
-                ds.editSetLimit(spending_limit);
-
-                // Update the progress bars
-                updateProgressBars();
-            }
-        });
 
         savingButton.setOnClickListener(new View.OnClickListener() {
             @Override
