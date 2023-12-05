@@ -7,7 +7,6 @@ import static com.example.budgetplanner.database.DatabaseContract.StatementEntry
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -22,7 +21,6 @@ final class DatabaseManager {
     private List<Statement> statements;
     private List<RecurringStatement> recurringStatements;
     private Budgeting budgeting;
-    private Context context;
 
     public DatabaseManager(@Nullable Context context, int databaseVersion, @Nullable String recurringStatementTableName, @Nullable String statementTableName) {
         this.helper = new DatabaseHelper(context, DATABASE_NAME, databaseVersion, recurringStatementTableName, statementTableName);

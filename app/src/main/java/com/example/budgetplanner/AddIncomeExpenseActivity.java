@@ -13,6 +13,9 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.budgetplanner.deprecated.BudgetDataSource;
+import com.example.budgetplanner.deprecated.Statement;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;

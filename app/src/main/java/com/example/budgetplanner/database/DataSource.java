@@ -1,12 +1,9 @@
 package com.example.budgetplanner.database;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.example.budgetplanner.BudgetingActivity;
 import com.example.budgetplanner.MonthItem;
 
 import java.time.LocalDate;
@@ -39,7 +36,7 @@ public final class DataSource {
         }, ONE_DAY_MILLIS);
         this.tableMonth = LocalDate.of(monthItem.getYear(), monthItem.getMonthValue(), 1);
         this.populateTable();
-        this.calculateBudgeting();
+        //this.calculateBudgeting();
     }
 
     public Budgeting calculateBudgeting() {
@@ -61,7 +58,7 @@ public final class DataSource {
     public void changeTable(MonthItem newMonth) {
         this.manager.changeTable(newMonth.toString());
         this.populateTable();
-        this.calculateBudgeting();
+        //this.calculateBudgeting();
     }
 
     public void save() {

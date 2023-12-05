@@ -8,6 +8,7 @@
 
 
     <ProgressBar
+        android:theme="@style/SavingLimitBar"
         android:id="@+id/current_saving_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="325dp"
@@ -18,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
+        android:theme="@style/SetLimitBar"
         android:id="@+id/current_limit_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="325dp"

@@ -1,8 +1,8 @@
-package com.example.budgetplanner;
+package com.example.budgetplanner.deprecated;
 
 import android.content.ContentValues;
 
-import static com.example.budgetplanner.BudgetContract.BudgetStatement;
+import static com.example.budgetplanner.deprecated.BudgetContract.BudgetStatement;
 
 /**
  * Statement class represents one statement in a database table storing statements.

@@ -1,4 +1,4 @@
-package com.example.budgetplanner;
+package com.example.budgetplanner.deprecated;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.budgetplanner.R;
+import com.example.budgetplanner.WarningDialogManager;
+
 @Deprecated
 public class ShowWarningActivity extends AppCompatActivity {
 

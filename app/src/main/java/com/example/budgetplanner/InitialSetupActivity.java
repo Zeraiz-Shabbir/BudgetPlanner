@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -80,14 +81,6 @@ public class InitialSetupActivity extends AppCompatActivity {
                     }
                 }
             });
-            okButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    InitialSetupActivity.this.ds.setBalance(Double.parseDouble(startingBalanceEditText.getText().toString()));
-                    InitialSetupActivity.this.ds.save();
-                    //Toast.makeText(InitialSetupActivity.this, String.valueOf(InitialSetupActivity.this.ds.getBalance()), Toast.LENGTH_SHORT).show();
-                }
-            });
 
             // Set a text change listener for the starting balance EditText
             startingBalanceEditText.addTextChangedListener(new TextWatcher() {
@@ -132,6 +125,15 @@ public class InitialSetupActivity extends AppCompatActivity {
                     Intent intent = new Intent(InitialSetupActivity.this, BudgetingActivity.class);
                     intent.putExtra(BudgetingActivity.GET_MONTH_FROM_INTENT, InitialSetupActivity.this.currentMonth.toString());
                     startActivity(intent);
+                }
+            });
+
+            okButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    InitialSetupActivity.this.ds.setBalance(Double.parseDouble(startingBalanceEditText.getText().toString()));
+                    InitialSetupActivity.this.ds.save();
+                    Toast.makeText(InitialSetupActivity.this, String.valueOf(InitialSetupActivity.this.ds.getBalance()), Toast.LENGTH_SHORT).show();
                 }
             });
         }

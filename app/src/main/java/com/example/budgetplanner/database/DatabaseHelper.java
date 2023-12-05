@@ -36,20 +36,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        if (newVersion < oldVersion) {
-            this.onDowngrade(database, oldVersion, newVersion);
-            return;
-        }
-        database.execSQL(this.getDeleteStatementTableSQL());
-        database.execSQL(this.getDeleteRecurringStatementTableSQL());
-        database.execSQL(this.getDeleteBudgetingTableSQL());
-        database.setVersion(newVersion);
         this.onCreate(database);
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        this.onUpgrade(database, newVersion, oldVersion);
     }
 
     public void changeTable(String newStatementTableName) {
