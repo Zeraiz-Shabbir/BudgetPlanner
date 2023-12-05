@@ -13,14 +13,26 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.budgetplanner.database.DataSource;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 public class InitialSetupActivity extends AppCompatActivity {
 
     static final String INTENT_ISEXPENSE_NAME = "isExpense";
     static final String INTENT_ISINCOME_NAME = "isIncome";
+    private DataSource ds;
+    private MonthItem currentMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        String month = today.getMonth().toString();
+        int currentYear = today.getYear();
+        this.currentMonth = new MonthItem(month, currentYear);
+        this.ds = new DataSource(this, this.currentMonth);
 
         // hide keyboard by default so it doesn't automatically focus on EditTexts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -43,9 +55,11 @@ public class InitialSetupActivity extends AppCompatActivity {
             Button budgetingButton = findViewById(R.id.initialBudgeting);
             Button submitButton = findViewById(R.id.initalSubmit);
             EditText startingBalanceEditText = findViewById(R.id.balanceStart);
+            Button okButton = findViewById(R.id.saveBalance);
 
             // Set a click listener for the Submit button
             submitButton.setEnabled(false);
+            okButton.setEnabled(false);
             submitButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -66,6 +80,14 @@ public class InitialSetupActivity extends AppCompatActivity {
                     }
                 }
             });
+            okButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    InitialSetupActivity.this.ds.setBalance(Double.parseDouble(startingBalanceEditText.getText().toString()));
+                    InitialSetupActivity.this.ds.save();
+                    //Toast.makeText(InitialSetupActivity.this, String.valueOf(InitialSetupActivity.this.ds.getBalance()), Toast.LENGTH_SHORT).show();
+                }
+            });
 
             // Set a text change listener for the starting balance EditText
             startingBalanceEditText.addTextChangedListener(new TextWatcher() {
@@ -79,6 +101,7 @@ public class InitialSetupActivity extends AppCompatActivity {
                 public void afterTextChanged(Editable editable) {
                     // Enable the Submit button if the starting balance is not empty
                     submitButton.setEnabled(!startingBalanceEditText.getText().toString().isEmpty());
+                    okButton.setEnabled(!startingBalanceEditText.getText().toString().isEmpty());
                 }
             });
 
@@ -107,6 +130,7 @@ public class InitialSetupActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(InitialSetupActivity.this, BudgetingActivity.class);
+                    intent.putExtra(BudgetingActivity.GET_MONTH_FROM_INTENT, InitialSetupActivity.this.currentMonth.toString());
                     startActivity(intent);
                 }
             });

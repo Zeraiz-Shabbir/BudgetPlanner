@@ -22,7 +22,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
     private String deleteRecurringStatementTableSQL;
     private String deleteBudgetingTableSQL;
 
-    public DatabaseHelper(@Nullable Context context, @Nullable String databaseName, int databaseVersion, String statementTableName, String recurringStatementTableName) {
+    public DatabaseHelper(@Nullable Context context, @Nullable String databaseName, int databaseVersion, String recurringStatementTableName, String statementTableName) {
         super(context, databaseName, null, databaseVersion);
         this.init(statementTableName, recurringStatementTableName);
     }
@@ -66,7 +66,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
                 StatementEntry.COLUMN_LABEL + " TEXT," +
                 StatementEntry.COLUMN_AMOUNT + " REAL," +
                 StatementEntry.COLUMN_NOTES + " TEXT," +
-                StatementEntry.COLUMN_EXPENSE + " INTEGER) WITHOUT ROWID"
+                StatementEntry.COLUMN_EXPENSE + " INTEGER)"
         );
         this.setCreateRecurringStatementTableSQL(
                 "CREATE TABLE " + recurringStatementTableName + " (" +
@@ -76,7 +76,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
                 RecurringStatementEntry.COLUMN_AMOUNT + " REAL," +
                 RecurringStatementEntry.COLUMN_NOTES + " TEXT," +
                 RecurringStatementEntry.COLUMN_EXPENSE + " INTEGER," +
-                RecurringStatementEntry.COLUMN_FREQUENCY + " INTEGER) WITHOUT ROWID"
+                RecurringStatementEntry.COLUMN_FREQUENCY + " INTEGER)"
         );
         this.setCreateBudgetingTableSQL(
                 "CREATE TABLE " + (statementTableName + BUDGETING_TABLE_NAME_SUFFIX) + " (" +

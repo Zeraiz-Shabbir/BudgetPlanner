@@ -1,9 +1,12 @@
 package com.example.budgetplanner.database;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.budgetplanner.BudgetingActivity;
 import com.example.budgetplanner.MonthItem;
 
 import java.time.LocalDate;
@@ -59,6 +62,10 @@ public final class DataSource {
         this.manager.changeTable(newMonth.toString());
         this.populateTable();
         this.calculateBudgeting();
+    }
+
+    public void save() {
+        this.manager.save();
     }
 
     private void populateTable() {
@@ -294,18 +301,34 @@ public final class DataSource {
     }
 
     public double getBalance() {
-        return this.manager.getBudgeting().getBalance();
+        return this.manager.getBalance();
     }
 
     public double getAmountSpent() {
-        return this.manager.getBudgeting().getAmountSpent();
+        return this.manager.getAmountSpent();
     }
 
     public double getSpendingLimit() {
-        return this.manager.getBudgeting().getSpendingLimit();
+        return this.manager.getSpendingLimit();
     }
 
     public double getSavingLimit() {
-        return this.manager.getBudgeting().getSavingLimit();
+        return this.manager.getSavingLimit();
+    }
+
+    public void setBalance(double balance) {
+        this.manager.setBalance(balance);
+    }
+
+    public void setAmountSpent(double amountSpent) {
+        this.manager.setAmountSpent(amountSpent);
+    }
+
+    public void setSpendingLimit(double spendingLimit) {
+        this.manager.setSpendingLimit(spendingLimit);
+    }
+
+    public void setSavingLimit(double savingLimit) {
+        this.manager.setSavingLimit(savingLimit);
     }
 }

@@ -8,11 +8,11 @@ public class MonthItem {
     private int year;
 
     public MonthItem(String month, int year) {
-        this.setMonth(month);
+        this.setMonthName(month);
         this.setYear(year);
     }
 
-    public void setMonth(String month) {
+    public void setMonthName(String month) {
         this.month = month;
     }
 
@@ -20,7 +20,7 @@ public class MonthItem {
         this.year = year;
     }
 
-    public String getMonth() {
+    public String getMonthName() {
         return this.month;
     }
 
@@ -34,6 +34,6 @@ public class MonthItem {
 
     @Override
     public String toString() {
-        return (this.getMonth() + this.getYear());
+        return (this.getMonthName() + this.getYear());
     }
 }

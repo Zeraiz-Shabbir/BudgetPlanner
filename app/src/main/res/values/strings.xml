@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BudgetPlanner</string>
+    <string name="app_name">Budget Planner</string>
     <string name="warning">Warning</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -31,6 +31,7 @@
     <string name="date_today">Use today\'s date</string>
     <string name="current_balance">Current Balance:</string>
     <string name="exit">Exit</string>
+    <string name="ok">Ok</string>
 
 
 </resources>

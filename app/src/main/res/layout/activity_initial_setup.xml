@@ -13,12 +13,12 @@
         android:layout_marginStart="43dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="43dp"
+        android:background="@drawable/round_button_background"
         android:text="@string/add_expense"
         android:textSize="28sp"
         app:icon="@mipmap/add_payment_background"
         app:iconPadding="0dp"
         app:iconSize="100dp"
-        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialAddIncome" />
 
@@ -29,12 +29,12 @@
         android:layout_marginStart="43dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="43dp"
+        android:background="@drawable/round_button_background"
         android:text="@string/add_income"
         android:textSize="28sp"
         app:icon="@mipmap/add_income_background"
         app:iconPadding="0dp"
         app:iconSize="100dp"
-        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialBudgeting" />
 
@@ -45,21 +45,21 @@
         android:layout_marginStart="43dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="43dp"
+        android:background="@drawable/round_button_background"
         android:text="@string/budgeting"
         android:textSize="28sp"
         app:icon="@mipmap/budgeting_background"
         app:iconPadding="0dp"
         app:iconSize="100dp"
-        android:background="@drawable/round_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/balanceStart" />
 
     <EditText
         android:id="@+id/balanceStart"
-        android:layout_width="wrap_content"
+        android:layout_width="155dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="43dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="104dp"
         android:ems="10"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -87,9 +87,19 @@
         android:layout_marginStart="130dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="130dp"
-        android:text="@string/submit"
         android:background="@drawable/round_button_background"
+        android:text="@string/submit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialAddExpense" />
+
+    <Button
+        android:id="@+id/saveBalance"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="43dp"
+        android:text="@string/ok"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

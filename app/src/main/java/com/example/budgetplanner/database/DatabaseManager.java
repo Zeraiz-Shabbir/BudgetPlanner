@@ -7,6 +7,7 @@ import static com.example.budgetplanner.database.DatabaseContract.StatementEntry
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -21,6 +22,7 @@ final class DatabaseManager {
     private List<Statement> statements;
     private List<RecurringStatement> recurringStatements;
     private Budgeting budgeting;
+    private Context context;
 
     public DatabaseManager(@Nullable Context context, int databaseVersion, @Nullable String recurringStatementTableName, @Nullable String statementTableName) {
         this.helper = new DatabaseHelper(context, DATABASE_NAME, databaseVersion, recurringStatementTableName, statementTableName);
@@ -31,18 +33,19 @@ final class DatabaseManager {
         this.readStatements();
         this.readRecurringStatements();
         this.readBudgeting();
+        //Toast.makeText(context, "balance=" + this.budgeting.getBalance(), Toast.LENGTH_SHORT).show();
     }
 
     public void save() {
-        int currVersion = this.database.getVersion();
-        this.helper.onUpgrade(this.database, currVersion, currVersion + 1);
+        //int currVersion = this.database.getVersion();
+        //this.helper.onUpgrade(this.database, currVersion, currVersion + 1);
         this.database.beginTransaction();
-        this.database.insertOrThrow(this.helper.getBudgetingTableName(), null, Utils.toContentValues(this.budgeting));
+        this.database.insert(this.helper.getBudgetingTableName(), null, Utils.toContentValues(this.budgeting));
         for (RecurringStatement recurringStatement : this.recurringStatements) {
-            this.database.insertOrThrow(this.helper.getRecurringStatementTableName(), null, Utils.toContentValues(recurringStatement));
+            this.database.insert(this.helper.getRecurringStatementTableName(), null, Utils.toContentValues(recurringStatement));
         }
         for (Statement statement : this.statements) {
-            this.database.insertOrThrow(this.helper.getStatementTableName(), null, Utils.toContentValues(statement));
+            this.database.insert(this.helper.getStatementTableName(), null, Utils.toContentValues(statement));
         }
         this.database.endTransaction();
     }
@@ -149,6 +152,7 @@ final class DatabaseManager {
                 return;
             }
             while (cursor.moveToNext()) {
+                //Toast.makeText(this.context, String.valueOf(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[0]))), Toast.LENGTH_SHORT).show();
                 this.budgeting.setBalance(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[0])));
                 this.budgeting.setAmountSpent(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[1])));
                 this.budgeting.setSpendingLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[2])));
@@ -207,7 +211,7 @@ final class DatabaseManager {
 
     public double setAmountSpent(double newAmountSpent) {
         double oldAmountSpent = this.budgeting.getAmountSpent();
-        this.budgeting.setBalance(newAmountSpent);
+        this.budgeting.setAmountSpent(newAmountSpent);
         return oldAmountSpent;
     }
 
@@ -221,6 +225,22 @@ final class DatabaseManager {
         double oldSavingLimit = this.budgeting.getSavingLimit();
         this.budgeting.setSavingLimit(newSavingLimit);
         return oldSavingLimit;
+    }
+
+    public double getBalance() {
+        return this.budgeting.getBalance();
+    }
+
+    public double getAmountSpent() {
+        return this.budgeting.getAmountSpent();
+    }
+
+    public double getSpendingLimit() {
+        return this.budgeting.getSpendingLimit();
+    }
+
+    public double getSavingLimit() {
+        return this.budgeting.getSavingLimit();
     }
 
     public Statement getStatement(long sid) {
