@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,10 @@ public class BudgetingActivity extends AppCompatActivity {
     private DataSource ds;
     private ProgressBar currentSavingBar;
     private ProgressBar currentLimitBar;
+    private TextView outputSavings;
+    private TextView outputSetLimit;
+    private PopupWindow popupWindow;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,7 @@ public class BudgetingActivity extends AppCompatActivity {
                 showToast("Saving Amount: " + amount);
                 BudgetingActivity.this.ds.setSavingLimit(Double.parseDouble(amount));
                 updateProgressBars();
+                printSavings();
                 // You can perform further actions with the saving amount
             }
         });
@@ -72,6 +79,7 @@ public class BudgetingActivity extends AppCompatActivity {
                 showToast("Set Limit Amount: " + amount);
                 BudgetingActivity.this.ds.setSpendingLimit(Double.parseDouble(amount));
                 updateProgressBars();
+                printSetLimit();
                 // You can perform further actions with the set limit amount
             }
         });
@@ -103,5 +111,17 @@ public class BudgetingActivity extends AppCompatActivity {
         //Toast.makeText(BudgetingActivity.this, "savingLimit=" + this.ds.getSavingLimit(), Toast.LENGTH_SHORT).show();
         currentLimitBar.setProgress((int) amountSpentProgress);
         currentSavingBar.setProgress((int) amountSavedProgress);
+    }
+
+    private void printSavings() {
+        outputSavings = (TextView) findViewById(R.id.savingsOutput);
+        outputSavings.setText("$" + String.valueOf(this.ds.getSavingLimit()));
+        outputSavings.setVisibility(View.VISIBLE);
+    }
+
+    private void printSetLimit() {
+        outputSetLimit = (TextView) findViewById(R.id.setLimitOutput);
+        outputSetLimit.setText("$" + String.valueOf(this.ds.getSpendingLimit()));
+        outputSetLimit.setVisibility(View.VISIBLE);
     }
 }

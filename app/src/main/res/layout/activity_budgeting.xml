@@ -33,8 +33,8 @@
         android:layout_height="125dp"
         android:layout_marginStart="43dp"
         android:layout_marginTop="75dp"
-        android:text="@string/savings"
         android:background="@drawable/round_button_background"
+        android:text="@string/savings"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_limit_bar" />
 
@@ -42,11 +42,11 @@
         android:id="@+id/set_limit_button"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_marginStart="43dp"
         android:layout_marginTop="50dp"
-        android:text="@string/set_limit"
+        android:layout_marginEnd="43dp"
         android:background="@drawable/round_button_background"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/set_limit"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saving_button" />
 
     <TextView
@@ -66,6 +66,68 @@
         android:text="@string/current_limit"
         app:layout_constraintBottom_toTopOf="@+id/current_limit_bar"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/savingsDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:text="Current savings:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/saving_button"
+        app:layout_constraintTop_toBottomOf="@+id/current_limit_bar" />
+
+    <TextView
+        android:id="@+id/setLimitDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Current limit:"
+        app:layout_constraintEnd_toStartOf="@+id/set_limit_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saving_button" />
+
+    <TextView
+        android:id="@+id/savingsOutput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="TextView"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/saving_button"
+        app:layout_constraintTop_toBottomOf="@+id/savingsDisplay" />
+
+    <TextView
+        android:id="@+id/setLimitOutput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="TextView"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/set_limit_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setLimitDisplay" />
+
+    <ImageButton
+        android:id="@+id/info_savings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_dialog_info"
+        app:layout_constraintStart_toEndOf="@+id/saving_button"
+        app:layout_constraintTop_toTopOf="@+id/saving_button" />
+
+    <ImageButton
+        android:id="@+id/info_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_dialog_info"
+        app:layout_constraintStart_toEndOf="@+id/set_limit_button"
+        app:layout_constraintTop_toTopOf="@+id/set_limit_button" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
