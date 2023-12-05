@@ -1,10 +1,14 @@
 package com.example.budgetplanner;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -57,13 +61,30 @@ public class BudgetingActivity extends AppCompatActivity {
                 showSetLimitInputDialog();
             }
         });
+
+        ImageButton infoSavingsButton = findViewById(R.id.info_savings);
+        ImageButton infoLimitButton = findViewById(R.id.info_limit);
+
+        infoSavingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showInfoPopup("Savings:\nthe amount you want to save each month");
+            }
+        });
+
+        infoLimitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showInfoPopup("Set Limit:\nthe maximum you want to spend each month");
+            }
+        });
     }
 
     private void showSavingInputDialog() {
         SavingAndSetLimitDialogManager.showSavingInputDialog(this, new SavingAndSetLimitDialogManager.OnAmountEnteredListener() {
             @Override
             public void onAmountEntered(String amount) {
-                showToast("Saving Amount: " + amount);
+                //showToast("Saving Amount: " + amount);
                 BudgetingActivity.this.ds.setSavingLimit(Double.parseDouble(amount));
                 updateProgressBars();
                 printSavings();
@@ -76,7 +97,7 @@ public class BudgetingActivity extends AppCompatActivity {
         SavingAndSetLimitDialogManager.showSetLimitInputDialog(this, new SavingAndSetLimitDialogManager.OnAmountEnteredListener() {
             @Override
             public void onAmountEntered(String amount) {
-                showToast("Set Limit Amount: " + amount);
+                //showToast("Set Limit Amount: " + amount);
                 BudgetingActivity.this.ds.setSpendingLimit(Double.parseDouble(amount));
                 updateProgressBars();
                 printSetLimit();
@@ -124,4 +145,36 @@ public class BudgetingActivity extends AppCompatActivity {
         outputSetLimit.setText("$" + String.valueOf(this.ds.getSpendingLimit()));
         outputSetLimit.setVisibility(View.VISIBLE);
     }
+
+    private void showInfoPopup(String description) {
+        // Close existing popup if open
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            return;
+        }
+
+        // Inflate the popup_layout.xml
+        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_layout, null);
+
+        // Set the description
+        TextView popupText = popupView.findViewById(R.id.popup_description);
+        popupText.setText(description);
+
+        // Create the popup window
+        popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+
+        // Set a transparent background
+        popupWindow.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        // Allow clicks outside the popup to dismiss it
+        popupWindow.setOutsideTouchable(true);
+
+        // Show the popup at the center of the screen
+        popupWindow.showAtLocation(popupView, android.view.Gravity.CENTER, 0, 0);
+    }
+
 }

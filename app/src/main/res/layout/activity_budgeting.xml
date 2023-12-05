@@ -115,19 +115,21 @@
         android:id="@+id/info_savings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_dialog_info"
-        app:layout_constraintStart_toEndOf="@+id/saving_button"
-        app:layout_constraintTop_toTopOf="@+id/saving_button" />
+        android:src="@android:drawable/ic_menu_info_details"
+        app:layout_constraintEnd_toStartOf="@+id/savingsDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/current_limit_bar" />
 
     <ImageButton
         android:id="@+id/info_limit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="43dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_dialog_info"
-        app:layout_constraintStart_toEndOf="@+id/set_limit_button"
-        app:layout_constraintTop_toTopOf="@+id/set_limit_button" />
+        android:src="@android:drawable/ic_menu_info_details"
+        app:layout_constraintEnd_toStartOf="@+id/setLimitDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/saving_button" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
