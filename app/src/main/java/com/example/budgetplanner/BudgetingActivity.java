@@ -1,6 +1,8 @@
 package com.example.budgetplanner;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,8 +26,8 @@ public class BudgetingActivity extends AppCompatActivity {
     private DataSource ds;
     private ProgressBar currentSavingBar;
     private ProgressBar currentLimitBar;
-    private TextView outputSavings;
-    private TextView outputSetLimit;
+    private TextView outputPercentSavings;
+    private TextView outputPercentSetLimit;
     private PopupWindow popupWindow;
 
 
@@ -68,14 +70,14 @@ public class BudgetingActivity extends AppCompatActivity {
         infoSavingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showInfoPopup("Savings:\nthe amount you want to save each month");
+                showInfoPopup("Savings:\nthe amount you want to set as a goal to save this month");
             }
         });
 
         infoLimitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showInfoPopup("Set Limit:\nthe maximum you want to spend each month");
+                showInfoPopup("Set Limit:\nthe maximum amount you want to spend this month");
             }
         });
     }
@@ -126,8 +128,8 @@ public class BudgetingActivity extends AppCompatActivity {
     private void updateProgressBars() {
         double amountSpentProgress = (this.ds.getAmountSpent() / this.ds.getSpendingLimit()) * 100;
         double amountSavedProgress = (this.ds.getBalance() / this.ds.getSavingLimit()) * 100;
-        //Toast.makeText(BudgetingActivity.this, "amountSpent=" + this.ds.getAmountSpent(), Toast.LENGTH_SHORT).show();
-        //Toast.makeText(BudgetingActivity.this, "spendingLimit=" + this.ds.getSpendingLimit(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(BudgetingActivity.this, "amountSpent=" + this.ds.getAmountSpent(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(BudgetingActivity.this, "spendingLimit=" + this.ds.getSpendingLimit(), Toast.LENGTH_SHORT).show();
         //Toast.makeText(BudgetingActivity.this, "balance=" + this.ds.getBalance(), Toast.LENGTH_SHORT).show();
         //Toast.makeText(BudgetingActivity.this, "savingLimit=" + this.ds.getSavingLimit(), Toast.LENGTH_SHORT).show();
         currentLimitBar.setProgress((int) amountSpentProgress);
@@ -135,15 +137,35 @@ public class BudgetingActivity extends AppCompatActivity {
     }
 
     private void printSavings() {
-        outputSavings = (TextView) findViewById(R.id.savingsOutput);
-        outputSavings.setText("$" + String.valueOf(this.ds.getSavingLimit()));
-        outputSavings.setVisibility(View.VISIBLE);
+        TextView outputSavings = (TextView) findViewById(R.id.savingsOutput);
+        outputSavings.setText(String.format("$%.2f", this.ds.getSavingLimit()));
+
+        outputPercentSavings = (TextView) findViewById(R.id.percentSavings);
+        // prints "$balance / $saving limit = percent%"
+//        outputPercentSavings.setText(String.format("$%.2f / $%.2f = %.2f%%",
+//                this.ds.getBalance(), this.ds.getSavingLimit(),
+//                (this.ds.getBalance() / this.ds.getSavingLimit()) * 100));
+        // only prints "percent%"
+        double savingsPercentage = ((this.ds.getBalance() / this.ds.getSavingLimit()) * 100);
+        outputPercentSavings.setText(String.format("%.2f%%", savingsPercentage));
+        textColorChange(savingsPercentage, false);
+
     }
 
     private void printSetLimit() {
-        outputSetLimit = (TextView) findViewById(R.id.setLimitOutput);
-        outputSetLimit.setText("$" + String.valueOf(this.ds.getSpendingLimit()));
-        outputSetLimit.setVisibility(View.VISIBLE);
+        TextView outputSetLimit = (TextView) findViewById(R.id.setLimitOutput);
+        outputSetLimit.setText(String.format("$%.2f", this.ds.getSpendingLimit()));
+
+        outputPercentSetLimit = (TextView) findViewById(R.id.percentSetLimit);
+        // prints "$amount spent / $saving limit = percent%"
+//        outputSetLimit.setText(String.format("$%.2f / $%.2f = %.2f%%",
+//                this.ds.getAmountSpent(), this.ds.getSavingLimit(),
+//                (this.ds.getAmountSpent() / this.ds.getSavingLimit()) * 100));
+        // only prints "percent%"
+        double setLimitPercentage = ((this.ds.getAmountSpent() / this.ds.getSpendingLimit()) * 100);
+        outputPercentSetLimit.setText(String.format("%.2f%%", setLimitPercentage));
+        textColorChange(setLimitPercentage, true);
+
     }
 
     private void showInfoPopup(String description) {
@@ -175,6 +197,42 @@ public class BudgetingActivity extends AppCompatActivity {
 
         // Show the popup at the center of the screen
         popupWindow.showAtLocation(popupView, android.view.Gravity.CENTER, 0, 0);
+    }
+
+    private void textColorChange(double percentage, boolean isSetLimit) {
+
+        if (isSetLimit) {
+            if (percentage >= 0.00 && percentage <= 50.99) {
+                outputPercentSetLimit.setTextColor(Color.GREEN);
+                currentLimitBar.getProgressDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
+            } else if (percentage >= 51.00 && percentage <= 75.99) {
+                outputPercentSetLimit.setTextColor(Color.parseColor("#FFFDD835"));
+                currentLimitBar.getProgressDrawable().setColorFilter(Color.parseColor("#FFFDD835"), PorterDuff.Mode.SRC_IN);
+            } else if (percentage >= 76.00 && percentage <= 85.99) {
+                outputPercentSetLimit.setTextColor(Color.parseColor("#FFA500"));
+                currentLimitBar.getProgressDrawable().setColorFilter(Color.parseColor("#FFA500"), PorterDuff.Mode.SRC_IN);
+            } else if (percentage >= 86.00) {
+                outputPercentSetLimit.setTextColor(Color.RED);
+                currentLimitBar.getProgressDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+            }
+        }
+
+        if (!isSetLimit) {
+            if (percentage >= 0.00 && percentage <= 24.99) {
+                outputPercentSavings.setTextColor(Color.RED);
+                currentSavingBar.getProgressDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+            } else if (percentage >= 25.00 && percentage <= 49.99) {
+                outputPercentSavings.setTextColor(Color.parseColor("#FFA500"));
+                currentSavingBar.getProgressDrawable().setColorFilter(Color.parseColor("#FFA500"), PorterDuff.Mode.SRC_IN);
+            } else if (percentage >= 50.00 && percentage <= 74.99) {
+                outputPercentSavings.setTextColor(Color.parseColor("#FFFDD835"));
+                currentSavingBar.getProgressDrawable().setColorFilter(Color.parseColor("#FFFDD835"), PorterDuff.Mode.SRC_IN);
+            } else if (percentage >= 75.00) {
+                outputPercentSavings.setTextColor(Color.GREEN);
+                currentSavingBar.getProgressDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
+            }
+        }
+
     }
 
 }

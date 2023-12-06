@@ -7,6 +7,7 @@ import static com.example.budgetplanner.database.DatabaseContract.StatementEntry
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -37,17 +38,33 @@ final class DatabaseManager {
     }
 
     public void save() {
-        //int currVersion = this.database.getVersion();
-        //this.helper.onUpgrade(this.database, currVersion, currVersion + 1);
+        Log.d("DatabaseManager", "Saving data - Start of transaction");
         this.database.beginTransaction();
-        this.database.insert(this.helper.getBudgetingTableName(), null, Utils.toContentValues(this.budgeting));
-        for (RecurringStatement recurringStatement : this.recurringStatements) {
-            this.database.insert(this.helper.getRecurringStatementTableName(), null, Utils.toContentValues(recurringStatement));
+        try {
+            // Insert budgeting data
+            Log.d("DatabaseManager", "Inserting budgeting data");
+            this.database.insert(this.helper.getBudgetingTableName(), null, Utils.toContentValues(this.budgeting));
+
+            // Insert recurring statements
+            for (RecurringStatement recurringStatement : this.recurringStatements) {
+                Log.d("DatabaseManager", "Inserting recurring statement: " + recurringStatement.toString());
+                this.database.insert(this.helper.getRecurringStatementTableName(), null, Utils.toContentValues(recurringStatement));
+            }
+
+            // Insert regular statements
+            for (Statement statement : this.statements) {
+                Log.d("DatabaseManager", "Inserting regular statement: " + statement.toString());
+                this.database.insert(this.helper.getStatementTableName(), null, Utils.toContentValues(statement));
+            }
+
+            // Mark the transaction as successful
+            this.database.setTransactionSuccessful();
+            Log.d("DatabaseManager", "Transaction marked as successful");
+        } finally {
+            // End the transaction
+            this.database.endTransaction();
+            Log.d("DatabaseManager", "End of transaction");
         }
-        for (Statement statement : this.statements) {
-            this.database.insert(this.helper.getStatementTableName(), null, Utils.toContentValues(statement));
-        }
-        this.database.endTransaction();
     }
 
     public void close() {
