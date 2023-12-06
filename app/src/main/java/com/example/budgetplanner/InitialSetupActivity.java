@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -85,6 +86,7 @@ public class InitialSetupActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     InitialSetupActivity.this.ds.setBalance(Double.parseDouble(startingBalanceEditText.getText().toString()));
                     InitialSetupActivity.this.ds.save();
+                    hideKeyboard();
                     //Toast.makeText(InitialSetupActivity.this, String.valueOf(InitialSetupActivity.this.ds.getBalance()), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -134,6 +136,13 @@ public class InitialSetupActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+        }
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
 }
