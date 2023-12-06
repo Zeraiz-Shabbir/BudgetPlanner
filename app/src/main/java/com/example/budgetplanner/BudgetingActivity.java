@@ -128,8 +128,8 @@ public class BudgetingActivity extends AppCompatActivity {
     private void updateProgressBars() {
         double amountSpentProgress = (this.ds.getAmountSpent() / this.ds.getSpendingLimit()) * 100;
         double amountSavedProgress = (this.ds.getBalance() / this.ds.getSavingLimit()) * 100;
-        Toast.makeText(BudgetingActivity.this, "amountSpent=" + this.ds.getAmountSpent(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(BudgetingActivity.this, "spendingLimit=" + this.ds.getSpendingLimit(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(BudgetingActivity.this, "amountSpent=" + this.ds.getAmountSpent(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(BudgetingActivity.this, "spendingLimit=" + this.ds.getSpendingLimit(), Toast.LENGTH_SHORT).show();
         //Toast.makeText(BudgetingActivity.this, "balance=" + this.ds.getBalance(), Toast.LENGTH_SHORT).show();
         //Toast.makeText(BudgetingActivity.this, "savingLimit=" + this.ds.getSavingLimit(), Toast.LENGTH_SHORT).show();
         currentLimitBar.setProgress((int) amountSpentProgress);
