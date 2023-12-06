@@ -78,7 +78,7 @@ public final class DataSource {
             }
         }
         LocalDate nextDate = LocalDate.parse(recurringStatement.getDate(), FORMATTER);
-        Statement statement = (RecurringStatement) recurringStatement;
+        Statement statement = (Statement) recurringStatement;
         Random rand = new Random();
         boolean suppressWarnings = false;
         while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && (nextDate.getMonthValue() == this.tableMonth.getMonthValue())) {
