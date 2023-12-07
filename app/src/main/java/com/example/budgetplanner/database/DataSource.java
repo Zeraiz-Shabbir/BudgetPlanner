@@ -85,7 +85,7 @@ public final class DataSource {
         Statement statement = (RecurringStatement) recurringStatement;
         Random rand = new Random();
         boolean suppressWarnings = false;
-        while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && (nextDate.getMonthValue() == this.tableMonth.getMonthValue())) {
+        while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && ((nextDate.getYear() > this.tableMonth.getYear()) || (nextDate.getMonthValue() >= this.tableMonth.getMonthValue()))) {
             if (nextDate.isAfter(this.today)) {
                 suppressWarnings = true;
             }

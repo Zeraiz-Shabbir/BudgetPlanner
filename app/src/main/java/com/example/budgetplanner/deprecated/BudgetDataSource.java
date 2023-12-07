@@ -1,12 +1,9 @@
-package com.example.budgetplanner;
+package com.example.budgetplanner.deprecated;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
-import static com.example.budgetplanner.BudgetContract.BudgetStatement;
-import static com.example.budgetplanner.SavingsContract.SavingsStatement;
 
 import java.util.LinkedList;
 import java.util.List;

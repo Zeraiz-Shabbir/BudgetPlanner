@@ -22,7 +22,7 @@
             android:name=".MonthlyStatementInformationActivity"
             android:exported="false" />
         <activity
-            android:name=".ShowWarningActivity"
+            android:name=".deprecated.ShowWarningActivity"
             android:exported="false"
             android:theme="@style/AppTheme" /> <!-- Apply the theme directly here -->
         <activity
