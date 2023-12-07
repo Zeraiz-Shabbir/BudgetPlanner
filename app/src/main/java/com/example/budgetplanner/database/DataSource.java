@@ -11,6 +11,7 @@ import com.example.budgetplanner.MonthItem;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Timer;
@@ -330,5 +331,13 @@ public final class DataSource {
 
     public void setSavingLimit(double savingLimit) {
         this.manager.setSavingLimit(savingLimit);
+    }
+
+    public List<Statement> getStatements() {
+        return this.manager.getStatements();
+    }
+
+    public Budgeting getBudgeting() {
+        return this.manager.getBudgeting();
     }
 }

@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#2196F3</color> <!-- Deep Blue -->
     <color name="colorPrimaryDark">#1565C0</color> <!-- Dark Blue -->
-    <color name="colorAccent">#FF4081</color> <!-- Pink -->
+    <color name="colorAccent">#FA2A6DE1</color> <!-- Pink -->
 
     <!-- Additional Colors -->
     <color name="backgroundColor">#FFFFFF</color> <!-- White -->

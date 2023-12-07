@@ -49,6 +49,9 @@ public class BudgetingActivity extends AppCompatActivity {
         Button setLimitButton = findViewById(R.id.set_limit_button);
         currentSavingBar = findViewById(R.id.current_saving_bar);
         currentLimitBar = findViewById(R.id.current_limit_bar);
+        this.updateProgressBars();
+        this.printSavings();
+        this.printSetLimit();
 
         savingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,19 +113,6 @@ public class BudgetingActivity extends AppCompatActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void updateProgressBarsPROTO() {
-        double currentSaving = this.ds.getSavingLimit();
-        double currentLimit = this.ds.getSpendingLimit();
-
-        // Calculate progress for the savings bar
-        int progressSaving = (int) ((currentSaving / currentLimit) * 100);
-        this.currentSavingBar.setProgress(progressSaving);
-
-        // Calculate progress for the limit bar
-        int progressLimit = (int) ((currentSaving / currentLimit) * 100);
-        this.currentLimitBar.setProgress(progressLimit);
     }
 
     private void updateProgressBars() {
