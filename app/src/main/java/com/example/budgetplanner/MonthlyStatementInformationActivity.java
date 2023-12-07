@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -75,6 +76,18 @@ public class MonthlyStatementInformationActivity extends AppCompatActivity {
                         startActivity(inte);
                     }
                 });
+
+                Button functionButton = findViewById(R.id.functionButton);
+                functionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Proceed to the menu page
+                        Intent menuIntent = new Intent(MonthlyStatementInformationActivity.this, MenuActivity.class);
+                        startActivity(menuIntent);
+                        finish(); // Finish this activity so the user cannot go back to it
+                    }
+                });
+
 
                 containerLayout.addView(statementTextView);
             }
