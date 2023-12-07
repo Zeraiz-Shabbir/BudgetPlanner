@@ -113,7 +113,7 @@ public class InitialSetupActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(InitialSetupActivity.this, AddIncomeExpenseActivity.class);
                     intent.putExtra(INTENT_ISEXPENSE_NAME, false);
-                    intent.putExtra(INTENT_ISINCOME_NAME, true);
+                    //intent.putExtra(INTENT_ISINCOME_NAME, true);
                     startActivity(intent);
                 }
             });
@@ -123,7 +123,7 @@ public class InitialSetupActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(InitialSetupActivity.this, AddIncomeExpenseActivity.class);
                     intent.putExtra(INTENT_ISEXPENSE_NAME, true);
-                    intent.putExtra(INTENT_ISINCOME_NAME, false);
+                    //intent.putExtra(INTENT_ISINCOME_NAME, false);
                     startActivity(intent);
                 }
             });

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.view.WindowManager;
 import android.widget.CalendarView;
@@ -13,36 +14,38 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.budgetplanner.database.*;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AddIncomeExpenseActivity extends AppCompatActivity {
 
     private Spinner numberDropDown;
     private Spinner timeDropDown;
     private CalendarView calendarView;
-    private BudgetDataSource ds;
+    private DataSource ds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // hide keyboard by default so it doesn't automatically focus on EditTexts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         setContentView(R.layout.activity_add_income_expense);
 
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
-        String monthTableName = today.getMonth().toString() + today.getYear();
-        String savingsTableName = monthTableName + "_BUDGETING";
-        this.ds = new BudgetDataSource(AddIncomeExpenseActivity.this, monthTableName, savingsTableName);
+        MonthItem monthItem = new MonthItem(today.getMonth().toString(), today.getYear());
+        this.ds = new DataSource(AddIncomeExpenseActivity.this, monthItem);
 
         // Read the extra parameter to determine income or expense
         Intent intent = getIntent();
-        boolean isIncome = intent.getBooleanExtra(InitialSetupActivity.INTENT_ISINCOME_NAME, false);
+        //boolean isIncome = intent.getBooleanExtra(InitialSetupActivity.INTENT_ISINCOME_NAME, false);
         boolean isPayment = intent.getBooleanExtra(InitialSetupActivity.INTENT_ISEXPENSE_NAME, false);
 
+        /*
         if (isIncome) {
             // Customize UI and behavior for adding income
             // For example, update the title or labels
@@ -50,6 +53,7 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
             // Customize UI and behavior for adding expense
             // For example, update the title or labels
         }
+        */
 
         // Initialize views
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
@@ -62,6 +66,8 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
         numberDropDown.setEnabled(false);
         timeDropDown.setEnabled(false);
         calendarView.setVisibility(View.GONE);
+        AtomicBoolean dateToday = new AtomicBoolean(false);
+        AtomicBoolean oneTimeStatement = new AtomicBoolean(false);
 
         // Set up a listener for the first radio group
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -69,6 +75,7 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                 // Set drop downs to disabled
                 numberDropDown.setEnabled(false);
                 timeDropDown.setEnabled(false);
+                oneTimeStatement.set(true);
             } else if (checkedId == R.id.everyRadioButton) {
                 // Set drop downs to enabled
                 numberDropDown.setEnabled(true);
@@ -84,6 +91,7 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
             } else if (checkedId == R.id.dateToday) {
                 // Set calendar to gone
                 calendarView.setVisibility(View.GONE);
+                dateToday.set(true);
             }
         });
 
@@ -91,88 +99,75 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Statement stmt = new Statement();
                 EditText labelField = findViewById(R.id.labelEditText);
                 EditText amountField = findViewById(R.id.amountEditText);
                 CalendarView dateField = findViewById(R.id.calendar);
                 EditText notesField = null;
-
                 String label = labelField.getText().toString();
                 Double amount = Double.parseDouble(amountField.getText().toString());
-                LocalDate dateObj = Instant.ofEpochMilli(dateField.getDate()).atZone(ZoneId.systemDefault()).toLocalDate();
-                String date = "";
-                //String notes = notesField.getText().toString();
+                LocalDate dateObj = (dateToday.get()) ? today : Instant.ofEpochMilli(dateField.getDate()).atZone(ZoneId.systemDefault()).toLocalDate();
+                String date = dateObj.format(DataSource.FORMATTER);
+                String notes = notesField.getText().toString();
+                long sid = new Random().nextLong();
+                int returnVal = 0;
+                Statement statement = null;
+                if (oneTimeStatement.get()) {
+                    statement = new Statement(sid, date, label, amount, notes, isPayment);
+                    returnVal = ds.insertStatement(statement);
+                }
+                else {
+                    int frequency = (int) numberDropDown.getSelectedItem();
+                    String time = (String) timeDropDown.getSelectedItem();
+                    switch (time.charAt(0)) {
+                        case 'd':
+                            break;
+                        case 'w':
+                            frequency *= 7;
+                            break;
+                        case 'm':
+                            //dateObj.plusMonths(frequency);
+                            frequency *= 30;
+                            break;
+                        case 'y':
+                            frequency *= 365;
+                            break;
+                    }
+                    statement = new RecurringStatement(sid, date, label, amount, notes, isPayment, frequency);
+                    returnVal = ds.insertRecurringStatement((RecurringStatement) statement);
+                }
 
-                Intent data = getIntent();
-                boolean isExpense = data.getBooleanExtra("isExpense", false);
-                final boolean[] cancelpayment = {false};
+                switch (returnVal) {
+                    case -1:
+                        throw new RuntimeException("ERROR: " + statement + " was not inserted due to unknown causes");
+                    case 1:
+                        WarningDialogManager.showSavingDepletedDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                finish();
+                                dialog.dismiss();
+                            }
+                        });
+                        break;
+                    case 2:
+                    case 3:
+                        WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                finish();
+                                dialog.dismiss();
+                            }
+                        });
+                        break;
+                    case 0:
+                        break;
+                }
+                /*
                 double balance = ds.getBalance();
                 double setLimit = ds.getSetLimit();
                 // Field for monitoring how much the user has come closer to spending limit
                 double spentAmt = ds.getAmountSpent();
                 double minAmtToSave = ds.getSavings();
-
-                if (isExpense) {
-
-                    // Expense would negate balance, hence all savings as well
-                    if (balance < amount) {
-                        WarningDialogManager.showSavingDepletedDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                cancelpayment[0] = true;
-                                finish();
-                                dialog.dismiss();
-                            }
-                        });
-                    }
-                    // Expense would cross the spending limit set previously
-                    else if (setLimit < (spentAmt + amount)) {
-                        WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                cancelpayment[0] = true;
-                                finish();
-                                dialog.dismiss();
-                            }
-                        });
-                    }
-                    // Expense didn't deplete savings or cross spending limit
-                    else {
-
-                        spentAmt += amount;
-                        balance -= amount;
-                        ds.editAmountSpent(spentAmt);
-                        ds.editBalance(balance);
-                    }
-                }
-                else if (isIncome) {
-
-                    balance += amount;
-                    ds.editBalance(balance);
-                }
-
-                if (!cancelpayment[0]) {
-
-
-                }
-
-                int month = dateObj.getMonthValue();
-                int day = dateObj.getDayOfMonth();
-                int year = dateObj.getYear();
-
-                date.concat((month < 10) ? ("0" + month) : String.valueOf(month));
-                date.concat((day < 10) ? ("0" + day) : String.valueOf(day));
-                date.concat(String.valueOf(year));
-
-                stmt.setDate(date);
-                stmt.setLabel(label);
-                stmt.setAmount(amount);
-                stmt.setNotes(null);
-
-                long id = ds.addStatement(stmt);
-                stmt.setId(id);
-
+                 */
                 finish();
             }
         });

@@ -1,4 +1,4 @@
-package com.example.budgetplanner;
+package com.example.budgetplanner.deprecated;
 
 import android.content.Context;
 
