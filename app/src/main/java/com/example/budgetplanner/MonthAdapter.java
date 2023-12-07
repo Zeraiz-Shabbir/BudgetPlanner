@@ -1,7 +1,5 @@
 package com.example.budgetplanner;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +12,15 @@ import java.util.List;
 
 public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.MonthViewHolder> {
     private List<MonthItem> monthList;
-    private Context context;
-
-    public MonthAdapter(Context context, List<MonthItem> monthList) {
-        this.context = context;
-        this.monthList = monthList;
-    }
+    private OnItemClickListener onItemClickListener;
 
     public MonthAdapter(List<MonthItem> monthList) {
         this.monthList = monthList;
+    }
+
+    // Setter method to set the click listener from outside the adapter
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
@@ -44,13 +42,10 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.MonthViewHol
                 String selectedMonth = currentItem.getMonthName();
                 int selectedYear = currentItem.getYear();
 
-                // Create an intent to start MonthlyStatementInformationActivity
-                Intent intent = new Intent(context, MonthlyStatementInformationActivity.class);
-                intent.putExtra("month", selectedMonth);
-                intent.putExtra("year", selectedYear);
-
-                // Start the activity
-                context.startActivity(intent);
+                // Check if the listener is set and notify it
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(selectedMonth, selectedYear);
+                }
             }
         });
     }
@@ -67,5 +62,10 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.MonthViewHol
             super(itemView);
             monthTextView = itemView.findViewById(R.id.monthText);
         }
+    }
+
+    // Interface for item click events
+    public interface OnItemClickListener {
+        void onItemClick(String selectedMonth, int selectedYear);
     }
 }

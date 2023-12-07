@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,15 +27,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerViewMain);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize your data source with current month and year
+        // Initialize your data source with the current month and year
         monthList = new ArrayList<>();
         updateMonthList();
 
         adapter = new MonthAdapter(monthList);
         recyclerView.setAdapter(adapter);
+
+        // Set an item click listener for the adapter
+        com.example.budgetplanner.MonthAdapter.OnItemClickListener itemClickListener =
+                new com.example.budgetplanner.MonthAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(String selectedMonth, int selectedYear) {
+                        // Launch MonthlyStatementInformationActivity with selected month and year
+                        Intent intent = new Intent(MainActivity.this, MonthlyStatementInformationActivity.class);
+                        intent.putExtra("month", selectedMonth);
+                        intent.putExtra("year", selectedYear);
+                        startActivity(intent);
+                    }
+                };
+
+        adapter.setOnItemClickListener(itemClickListener);
 
         // Check for month change and update RecyclerView
         checkForMonthChange();
@@ -59,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 finish(); // Finish the activity and exit the app
             }
         });
-
     }
 
     private void updateMonthList() {
@@ -110,7 +123,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }, oneMinute);
     }
-
-
-
 }

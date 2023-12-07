@@ -24,10 +24,8 @@ public class BudgetingActivity extends AppCompatActivity {
 
     public static final String GET_MONTH_FROM_INTENT = "month";
     private DataSource ds;
-    private ProgressBar currentSavingBar;
-    private ProgressBar currentLimitBar;
-    private TextView outputPercentSavings;
-    private TextView outputPercentSetLimit;
+    private ProgressBar currentSavingBar, currentLimitBar;
+    private TextView outputPercentSavings, outputPercentSetLimit;
     private PopupWindow popupWindow;
 
 
@@ -115,7 +113,7 @@ public class BudgetingActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private void updateProgressBars() {
+    public void updateProgressBars() {
         double amountSpentProgress = (this.ds.getAmountSpent() / this.ds.getSpendingLimit()) * 100;
         double amountSavedProgress = (this.ds.getBalance() / this.ds.getSavingLimit()) * 100;
         //Toast.makeText(BudgetingActivity.this, "amountSpent=" + this.ds.getAmountSpent(), Toast.LENGTH_SHORT).show();
@@ -126,36 +124,24 @@ public class BudgetingActivity extends AppCompatActivity {
         currentSavingBar.setProgress((int) amountSavedProgress);
     }
 
-    private void printSavings() {
+    public void printSavings() {
         TextView outputSavings = (TextView) findViewById(R.id.savingsOutput);
         outputSavings.setText(String.format("$%.2f", this.ds.getSavingLimit()));
 
         outputPercentSavings = (TextView) findViewById(R.id.percentSavings);
-        // prints "$balance / $saving limit = percent%"
-//        outputPercentSavings.setText(String.format("$%.2f / $%.2f = %.2f%%",
-//                this.ds.getBalance(), this.ds.getSavingLimit(),
-//                (this.ds.getBalance() / this.ds.getSavingLimit()) * 100));
-        // only prints "percent%"
         double savingsPercentage = ((this.ds.getBalance() / this.ds.getSavingLimit()) * 100);
         outputPercentSavings.setText(String.format("%.2f%%", savingsPercentage));
         textColorChange(savingsPercentage, false);
-
     }
 
-    private void printSetLimit() {
+    public void printSetLimit() {
         TextView outputSetLimit = (TextView) findViewById(R.id.setLimitOutput);
         outputSetLimit.setText(String.format("$%.2f", this.ds.getSpendingLimit()));
 
         outputPercentSetLimit = (TextView) findViewById(R.id.percentSetLimit);
-        // prints "$amount spent / $saving limit = percent%"
-//        outputSetLimit.setText(String.format("$%.2f / $%.2f = %.2f%%",
-//                this.ds.getAmountSpent(), this.ds.getSavingLimit(),
-//                (this.ds.getAmountSpent() / this.ds.getSavingLimit()) * 100));
-        // only prints "percent%"
         double setLimitPercentage = ((this.ds.getAmountSpent() / this.ds.getSpendingLimit()) * 100);
         outputPercentSetLimit.setText(String.format("%.2f%%", setLimitPercentage));
         textColorChange(setLimitPercentage, true);
-
     }
 
     private void showInfoPopup(String description) {
