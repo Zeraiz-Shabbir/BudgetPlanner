@@ -11,8 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.example.budgetplanner.database.Budgeting;
+import com.example.budgetplanner.database.BudgetingException;
 import com.example.budgetplanner.database.DataSource;
 import com.example.budgetplanner.database.Statement;
+import com.example.budgetplanner.database.Utils;
+
 import java.util.List;
 
 public class MonthlyStatementInformationActivity extends AppCompatActivity {
@@ -32,13 +35,17 @@ public class MonthlyStatementInformationActivity extends AppCompatActivity {
             String selectedMonth = intent.getStringExtra("month");
             int selectedYear = intent.getIntExtra("year", 0);
             MonthItem month = new MonthItem(selectedMonth.toUpperCase(), selectedYear);
-            this.ds = new DataSource(MonthlyStatementInformationActivity.this, month);
+            try {
+                this.ds = new DataSource(MonthlyStatementInformationActivity.this, month);
+            } catch (BudgetingException e) {
+                Utils.diagnoseException(this, e);
+            }
 
             currentSavingBar = findViewById(R.id.savingsProgressBar2);
             currentLimitBar = findViewById(R.id.limitProgressBar2);
-            this.updateProgressBars();
-            this.printSavings();
-            this.printSetLimit();
+            //this.updateProgressBars();
+            //this.printSavings();
+            //this.printSetLimit();
 
             TextView balance = findViewById(R.id.balanceStmtView);
             balance.setText(String.format("$%.2f", this.ds.getBalance()));

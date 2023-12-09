@@ -6,11 +6,7 @@ import static com.example.budgetplanner.database.DatabaseContract.StatementEntry
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.widget.Toast;
-
-import com.example.budgetplanner.AddIncomeExpenseActivity;
-import com.example.budgetplanner.WarningDialogManager;
 
 public final class Utils {
 
@@ -71,19 +67,19 @@ public final class Utils {
     public static void diagnoseException(Context context, BudgetingException e) {
         String dialogMessage = "";
         final String removeStmt = "Remove this statement?";
-        final String deleteStmt = "Add this statement back?";
+        final String insertStmt = "Add this statement back?";
         final String updateStmt = "Edit this statement?";
         switch (e.getExitCode()) {
-            case 1:
-            case 3:
+            case 2:
                 dialogMessage = "You exceeded your set limit! ";
                 break;
-            case 2:
+            case 1:
+            case 3:
                 dialogMessage = "You have depleted your savings! ";
                 break;
             default:
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                break;
+                return;
         }
         switch (e.getSource()) {
             case CALCULATE_BUDGETING:
@@ -91,7 +87,7 @@ public final class Utils {
                 dialogMessage += removeStmt;
                 break;
             case DELETE_STATEMENT:
-                dialogMessage += deleteStmt;
+                dialogMessage += insertStmt;
                 break;
             case UPDATE_STATEMENT:
                 dialogMessage += updateStmt;
@@ -100,7 +96,7 @@ public final class Utils {
                 dialogMessage = e.getMessage() + dialogMessage + removeStmt;
                 break;
             case DELETE_RECURRING_STATEMENT:
-                dialogMessage = e.getMessage() + dialogMessage + deleteStmt;
+                dialogMessage = e.getMessage() + dialogMessage + insertStmt;
                 break;
             case UPDATE_RECURRING_STATEMENT:
                 dialogMessage = e.getMessage() + dialogMessage + updateStmt;

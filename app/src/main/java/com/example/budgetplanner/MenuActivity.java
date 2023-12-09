@@ -15,7 +15,9 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.budgetplanner.database.BudgetingException;
 import com.example.budgetplanner.database.DataSource;
+import com.example.budgetplanner.database.Utils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -34,7 +36,11 @@ public class MenuActivity extends AppCompatActivity {
         String month = today.getMonth().toString();
         int currentYear = today.getYear();
         this.currentMonth = new MonthItem(month, currentYear);
-        this.ds = new DataSource(this, this.currentMonth);
+        try {
+            this.ds = new DataSource(this, this.currentMonth);
+        } catch (BudgetingException e) {
+            Utils.diagnoseException(this, e);
+        }
 
         // hide keyboard by default so it doesn't automatically focus on EditTexts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
