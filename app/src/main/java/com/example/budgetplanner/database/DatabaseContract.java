@@ -21,6 +21,7 @@ final class DatabaseContract {
     public static class RecurringStatementEntry extends StatementEntry {
 
         public static final String COLUMN_FREQUENCY = "frequency";
+        public static final String COLUMN_TIME_UNIT = "time_unit";
     }
 
     public static class BudgetingEntry implements BaseColumns {

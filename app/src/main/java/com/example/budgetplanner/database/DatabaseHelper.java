@@ -76,7 +76,8 @@ final class DatabaseHelper extends SQLiteOpenHelper {
                 RecurringStatementEntry.COLUMN_AMOUNT + " REAL," +
                 RecurringStatementEntry.COLUMN_NOTES + " TEXT," +
                 RecurringStatementEntry.COLUMN_EXPENSE + " INTEGER," +
-                RecurringStatementEntry.COLUMN_FREQUENCY + " INTEGER)"
+                RecurringStatementEntry.COLUMN_FREQUENCY + " INTEGER," +
+                RecurringStatementEntry.COLUMN_TIME_UNIT + " TEXT)"
         );
         this.setCreateBudgetingTableSQL(
                 "CREATE TABLE " + (statementTableName + BUDGETING_TABLE_NAME_SUFFIX) + " (" +

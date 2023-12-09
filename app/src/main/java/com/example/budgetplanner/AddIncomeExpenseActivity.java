@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.view.WindowManager;
 import android.widget.CalendarView;
@@ -38,7 +37,11 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
 
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
         MonthItem monthItem = new MonthItem(today.getMonth().toString(), today.getYear());
-        this.ds = new DataSource(AddIncomeExpenseActivity.this, monthItem);
+        try {
+            this.ds = new DataSource(AddIncomeExpenseActivity.this, monthItem);
+        } catch (BudgetingException e) {
+            Utils.diagnoseException(AddIncomeExpenseActivity.this, e);
+        }
 
         // Read the extra parameter to determine income or expense
         Intent intent = getIntent();
@@ -106,60 +109,27 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
                 String label = labelField.getText().toString();
                 Double amount = Double.parseDouble(amountField.getText().toString());
                 LocalDate dateObj = (dateToday.get()) ? today : Instant.ofEpochMilli(dateField.getDate()).atZone(ZoneId.systemDefault()).toLocalDate();
-                String date = dateObj.format(DataSource.FORMATTER);
+                String date = dateObj.format(DataSource.DATE_FORMATTER);
                 String notes = notesField.getText().toString();
                 long sid = new Random().nextLong();
-                int returnVal = 0;
                 Statement statement = null;
                 if (oneTimeStatement.get()) {
                     statement = new Statement(sid, date, label, amount, notes, isPayment);
-                    returnVal = ds.insertStatement(statement);
+                    try {
+                        ds.insertStatement(statement);
+                    } catch (BudgetingException e) {
+                        Utils.diagnoseException(AddIncomeExpenseActivity.this, e);
+                    }
                 }
                 else {
                     int frequency = (int) numberDropDown.getSelectedItem();
                     String time = (String) timeDropDown.getSelectedItem();
-                    switch (time.charAt(0)) {
-                        case 'd':
-                            break;
-                        case 'w':
-                            frequency *= 7;
-                            break;
-                        case 'm':
-                            //dateObj.plusMonths(frequency);
-                            frequency *= 30;
-                            break;
-                        case 'y':
-                            frequency *= 365;
-                            break;
+                    statement = new RecurringStatement(sid, date, label, amount, notes, isPayment, frequency, time.charAt(0));
+                    try {
+                        ds.insertRecurringStatement((RecurringStatement) statement);
+                    } catch (BudgetingException e) {
+                        Utils.diagnoseException(AddIncomeExpenseActivity.this, e);
                     }
-                    statement = new RecurringStatement(sid, date, label, amount, notes, isPayment, frequency);
-                    returnVal = ds.insertRecurringStatement((RecurringStatement) statement);
-                }
-
-                switch (returnVal) {
-                    case -1:
-                        throw new RuntimeException("ERROR: " + statement + " was not inserted due to unknown causes");
-                    case 1:
-                        WarningDialogManager.showSavingDepletedDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                finish();
-                                dialog.dismiss();
-                            }
-                        });
-                        break;
-                    case 2:
-                    case 3:
-                        WarningDialogManager.showLimitExceededDialog(AddIncomeExpenseActivity.this, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                finish();
-                                dialog.dismiss();
-                            }
-                        });
-                        break;
-                    case 0:
-                        break;
                 }
                 /*
                 double balance = ds.getBalance();

@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -126,7 +125,8 @@ final class DatabaseManager {
                 RecurringStatementEntry.COLUMN_AMOUNT,
                 RecurringStatementEntry.COLUMN_NOTES,
                 RecurringStatementEntry.COLUMN_EXPENSE,
-                RecurringStatementEntry.COLUMN_FREQUENCY
+                RecurringStatementEntry.COLUMN_FREQUENCY,
+                RecurringStatementEntry.COLUMN_TIME_UNIT
         };
         String sortOrder = RecurringStatementEntry.COLUMN_DATE + " DESC";
         try (Cursor cursor = this.database.query(
@@ -145,7 +145,8 @@ final class DatabaseManager {
                 statement.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[3])));
                 statement.setNotes(cursor.getString(cursor.getColumnIndexOrThrow(projection[4])));
                 statement.setExpense(cursor.getInt(cursor.getColumnIndexOrThrow(projection[5])) == 1);
-                statement.setFrequencyInDays(cursor.getInt(cursor.getColumnIndexOrThrow(projection[6])));
+                statement.setFrequency(cursor.getInt(cursor.getColumnIndexOrThrow(projection[6])));
+                statement.setTimeUnit(cursor.getString(cursor.getColumnIndexOrThrow(projection[6])).charAt(0));
                 if (!this.recurringStatements.add(statement)) {
                     throw new RuntimeException("Statement " + statement + " was not retrieved due to unknown reasons");
                 }

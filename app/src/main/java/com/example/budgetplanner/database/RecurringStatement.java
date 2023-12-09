@@ -4,24 +4,27 @@ import androidx.annotation.NonNull;
 
 public final class RecurringStatement extends Statement {
 
-    private int frequencyInDays;
+    private int frequency;
+    private char timeUnit;
+
 
     public RecurringStatement() {
         super();
-        this.setFrequencyInDays(0);
+        this.setFrequency(0);
     }
 
-    public RecurringStatement(long sid, String date, String label, double amount, String notes, boolean isExpense, int frequencyInDays) {
+    public RecurringStatement(long sid, String date, String label, double amount, String notes, boolean isExpense, int frequency, char timeUnit) {
         super(sid, date, label, amount, notes, isExpense);
-        this.setFrequencyInDays(frequencyInDays);
+        this.setFrequency(frequency);
+        this.setTimeUnit(timeUnit);
     }
 
-    public void setFrequencyInDays(int frequencyInDays) {
-        this.frequencyInDays = frequencyInDays;
+    public void setFrequency(int frequencyInDays) {
+        this.frequency = frequencyInDays;
     }
 
-    public int getFrequencyInDays() {
-        return this.frequencyInDays;
+    public int getFrequency() {
+        return this.frequency;
     }
 
     @NonNull
@@ -29,7 +32,15 @@ public final class RecurringStatement extends Statement {
     public String toString() {
         return super.toString() +
         "RecurringStatement{" +
-        "frequencyInDays=" + frequencyInDays +
+        "frequencyInDays=" + frequency +
         '}';
+    }
+
+    public char getTimeUnit() {
+        return timeUnit;
+    }
+
+    public void setTimeUnit(char timeUnit) {
+        this.timeUnit = timeUnit;
     }
 }

@@ -14,7 +14,9 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.budgetplanner.database.BudgetingException;
 import com.example.budgetplanner.database.DataSource;
+import com.example.budgetplanner.database.Utils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -33,7 +35,11 @@ public class InitialSetupActivity extends AppCompatActivity {
         String month = today.getMonth().toString();
         int currentYear = today.getYear();
         this.currentMonth = new MonthItem(month, currentYear);
-        this.ds = new DataSource(this, this.currentMonth);
+        try {
+            this.ds = new DataSource(this, this.currentMonth);
+        } catch (BudgetingException e) {
+            Utils.diagnoseException(this, e);
+        }
 
         // hide keyboard by default so it doesn't automatically focus on EditTexts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -71,13 +77,11 @@ public class InitialSetupActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putBoolean("isInitialSetupCompleted", true);
                         editor.apply();
-
+                        ds.close();
                         // Proceed to the main page
                         Intent intent = new Intent(InitialSetupActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish(); // Finish this activity so the user cannot go back to it
-                    } else {
-                        // Show an error message or prompt to fill out required fields
                     }
                 }
             });
