@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
 import static com.example.budgetplanner.database.BudgetingException.*;
 
 public final class DataSource {
@@ -18,7 +19,7 @@ public final class DataSource {
     public static final int INITIAL_DATABASE_VERSION = 1;
     public static final String RECURRING_STATEMENTS_TABLE_NAME = "recurring_statements";
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.US);
-    private static final long ONE_DAY_MILLIS = 24 * 60 * 60 * 1000;
+
     private DatabaseManager manager;
     private LocalDate today;
     private LocalDate tableMonth;
@@ -31,32 +32,32 @@ public final class DataSource {
         this.calculateBudgeting();
     }
 
-    public Budgeting calculateBudgeting() throws BudgetingException {
-        int exitCode = 0;
-        LocalDate date = null;
+    private void calculateBudgeting() throws BudgetingException {
         double balance = 0.00, amountSpent = 0.00;
+
         for (Statement statement : this.manager.getStatements()) {
-            date = LocalDate.parse(statement.getDate(), DATE_FORMATTER);
+            LocalDate date = LocalDate.parse(statement.getDate(), DATE_FORMATTER);
+
             if (date.isBefore(this.today)) {
                 if (statement.isExpense()) {
                     if (statement.getAmount() > this.getBalance()) {
-                        exitCode = exitCode + 1;
+                        throw new BudgetingException("When current balance and amount spent were recalculated, ", 1, statement, ExceptionSource.CALCULATE_BUDGETING);
                     }
+
                     if (statement.getAmount() + this.getAmountSpent() > this.getSpendingLimit()) {
-                        exitCode = exitCode + 2;
-                    }
-                    if (exitCode != 0) {
-                        throw new BudgetingException("When current balance and amount spent were recalculated, ", exitCode, statement, ExceptionSource.CALCULATE_BUDGETING);
+                        throw new BudgetingException("When current balance and amount spent were recalculated, ", 2, statement, ExceptionSource.CALCULATE_BUDGETING);
                     }
                 }
+
                 balance += (statement.isExpense()) ? -statement.getAmount() : statement.getAmount();
                 amountSpent += (statement.isExpense()) ? statement.getAmount() : 0.00;
+            } else {
+                break;
             }
-            else break;
         }
+
         this.manager.setBalance((balance == 0.00) ? this.getBalance() : balance);
         this.manager.setAmountSpent((amountSpent == 0.00) ? this.getAmountSpent() : amountSpent);
-        return this.getBudgeting();
     }
 
     public void changeTable(MonthItem newMonth) throws BudgetingException {
@@ -80,61 +81,55 @@ public final class DataSource {
     }
 
     public void insertRecurringStatement(RecurringStatement recurringStatement) throws BudgetingException {
-        if (!this.manager.getRecurringStatements().contains(recurringStatement)) {
-            if (!this.manager.insertRecurringStatement(recurringStatement)) {
-                throw new BudgetingException("Recurring statement was not inserted due to unknown causes", -1, recurringStatement, ExceptionSource.INSERT_RECURRING_STATEMENT);
-            }
-        }
-        LocalDate nextDate = LocalDate.parse(recurringStatement.getDate(), DATE_FORMATTER);
-        Statement statement = (RecurringStatement) recurringStatement;
-        Random rand = new Random();
-        boolean suppressWarnings = false;
-        while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && ((nextDate.getYear() > this.tableMonth.getYear()) || (nextDate.getMonthValue() >= this.tableMonth.getMonthValue()))) {
-            if (nextDate.isAfter(this.today)) {
-                suppressWarnings = true;
-            }
-            statement.setStatementID(rand.nextLong());
-            statement.setDate(nextDate.format(DATE_FORMATTER));
-            int exitCode = this.insertStatement(statement, suppressWarnings);
-            if (!suppressWarnings) {
-                switch (exitCode) {
-                    case -1:
-                        throw new BudgetingException("Statement was not inserted due to unknown causes", exitCode, statement, ExceptionSource.INSERT_RECURRING_STATEMENT);
-                    case 0:
-                    case -2:
-                        break;
-                    default:
-                        throw new BudgetingException("When insertion of statement was attempted, ", exitCode, statement, ExceptionSource.INSERT_RECURRING_STATEMENT);
+        if (!this.manager.getRecurringStatements().contains(recurringStatement) && this.manager.insertRecurringStatement(recurringStatement)) {
+            LocalDate nextDate = LocalDate.parse(recurringStatement.getDate(), DATE_FORMATTER);
+            Statement statement = (RecurringStatement) recurringStatement;
+            Random rand = new Random();
+            boolean suppressWarnings = false;
+            while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && ((nextDate.getYear() > this.tableMonth.getYear()) || (nextDate.getMonthValue() >= this.tableMonth.getMonthValue()))) {
+                if (nextDate.isAfter(this.today)) {
+                    suppressWarnings = true;
                 }
-            }
-            switch (recurringStatement.getTimeUnit()) {
-                case 'd':
-                    nextDate = nextDate.plusDays(recurringStatement.getFrequency());
-                    break;
-                case 'w':
-                    nextDate = nextDate.plusWeeks(recurringStatement.getFrequency());
-                    break;
-                case 'm':
-                    nextDate = nextDate.plusMonths(recurringStatement.getFrequency());
-                    break;
-                case 'y':
-                    nextDate = nextDate.plusYears(recurringStatement.getFrequency());
-                    break;
+                statement.setStatementID(rand.nextLong());
+                statement.setDate(nextDate.format(DATE_FORMATTER));
+                int exitCode = this.insertStatement(statement, suppressWarnings);
+                if (!suppressWarnings) {
+                    if (exitCode != 0 && exitCode != -2) {
+                        throw new BudgetingException("When insertion of statement was attempted, ", exitCode, statement, ExceptionSource.INSERT_RECURRING_STATEMENT);
+                    }
+                }
+                switch (recurringStatement.getTimeUnit()) {
+                    case 'd':
+                        nextDate = nextDate.plusDays(recurringStatement.getFrequency());
+                        break;
+                    case 'w':
+                        nextDate = nextDate.plusWeeks(recurringStatement.getFrequency());
+                        break;
+                    case 'm':
+                        nextDate = nextDate.plusMonths(recurringStatement.getFrequency());
+                        break;
+                    case 'y':
+                        nextDate = nextDate.plusYears(recurringStatement.getFrequency());
+                        break;
+                }
             }
         }
     }
 
     public void insertStatement(Statement statement) throws BudgetingException {
         int exitCode = this.insertStatement(statement, false);
-        switch (exitCode) {
-            case -1:
-                throw new BudgetingException("Statement was not inserted due to unknown causes", exitCode, statement, ExceptionSource.INSERT_STATEMENT);
-            case 0:
-            case -2:
-                break;
-            default:
-                throw new BudgetingException("When insertion of statement was attempted, ", exitCode, statement, ExceptionSource.INSERT_STATEMENT);
+        if (exitCode != 0 && exitCode != -2) {
+            throw new BudgetingException("When insertion of statement was attempted, ", exitCode, statement, ExceptionSource.INSERT_STATEMENT);
         }
+
+        // Update the balance after inserting the statement
+        updateBalanceAfterInsert(statement);
+    }
+
+    private void updateBalanceAfterInsert(Statement statement) {
+        double amount = statement.isExpense() ? -statement.getAmount() : statement.getAmount();
+        double newBalance = this.getBalance() + amount;
+        this.setBalance(newBalance);
     }
 
     private int insertStatement(Statement statement, boolean suppressWarnings) {
@@ -144,10 +139,12 @@ public final class DataSource {
             return exitCode;
         }
         if (statement.isExpense()) {
-            if (statement.getAmount() > this.getBalance()) {
+            double balance = this.getBalance();
+            double amountSpent = this.getAmountSpent();
+            if (statement.getAmount() > balance) {
                 exitCode = exitCode + 1;
             }
-            if (statement.getAmount() + this.getAmountSpent() > this.getSpendingLimit()) {
+            if (statement.getAmount() + amountSpent > this.getSpendingLimit()) {
                 exitCode = exitCode + 2;
             }
             if (exitCode != 0) {
@@ -156,10 +153,9 @@ public final class DataSource {
                 }
                 return exitCode;
             }
-            this.manager.setAmountSpent(this.getAmountSpent() + statement.getAmount());
-            this.manager.setBalance(this.getBalance() - statement.getAmount());
-        }
-        else {
+            this.manager.setAmountSpent(amountSpent + statement.getAmount());
+            this.manager.setBalance(balance - statement.getAmount());
+        } else {
             this.manager.setBalance(this.getBalance() + statement.getAmount());
         }
         if (!this.manager.insertStatement(statement)) {
@@ -169,71 +165,54 @@ public final class DataSource {
     }
 
     public void deleteRecurringStatement(RecurringStatement recurringStatement) throws BudgetingException {
-        if (this.manager.getRecurringStatements().contains(recurringStatement)) {
-            if (!this.manager.deleteRecurringStatement(recurringStatement)) {
-                throw new BudgetingException("Recurring statement was not deleted due to unknown causes", -1, recurringStatement, ExceptionSource.DELETE_RECURRING_STATEMENT);
-            }
-        }
-        LocalDate nextDate = LocalDate.parse(recurringStatement.getDate(), DATE_FORMATTER);
-        Statement matchingStatement = null;
-        boolean suppressWarnings = false;
-        boolean found = false;
-        int index = 0;
-        while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && ((nextDate.getYear() > this.tableMonth.getYear()) || (nextDate.getMonthValue() >= this.tableMonth.getMonthValue()))) {
-            if (nextDate.isAfter(this.today)) {
-                suppressWarnings = true;
-            }
-            for (; index < this.manager.getStatements().size(); index++) {
-                matchingStatement = this.manager.getStatements().get(index);
-                if ((matchingStatement.getLabel().equals(recurringStatement.getLabel())) && (matchingStatement.getAmount() == recurringStatement.getAmount()) && (matchingStatement.isExpense() == recurringStatement.isExpense())) {
-                    found = true;
-                    break;
+        if (this.manager.getRecurringStatements().contains(recurringStatement) && this.manager.deleteRecurringStatement(recurringStatement)) {
+            LocalDate nextDate = LocalDate.parse(recurringStatement.getDate(), DATE_FORMATTER);
+            Statement matchingStatement = null;
+            boolean suppressWarnings = false;
+            boolean found = false;
+            int index = 0;
+            while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && ((nextDate.getYear() > this.tableMonth.getYear()) || (nextDate.getMonthValue() >= this.tableMonth.getMonthValue()))) {
+                if (nextDate.isAfter(this.today)) {
+                    suppressWarnings = true;
                 }
-            }
-            if (found) {
-                int exitCode = this.deleteStatement(matchingStatement, suppressWarnings);
-                if (!suppressWarnings) {
-                    switch (exitCode) {
-                        case -2:
-                            throw new BudgetingException("Matching statement not found", exitCode, matchingStatement, ExceptionSource.DELETE_RECURRING_STATEMENT);
-                        case -1:
-                            throw new BudgetingException("Matching statement was not deleted due to unknown causes", exitCode, matchingStatement, ExceptionSource.DELETE_RECURRING_STATEMENT);
-                        case 0:
-                            break;
-                        default:
-                            throw new BudgetingException("When removal of matching statement was attempted, ", exitCode, matchingStatement, ExceptionSource.DELETE_RECURRING_STATEMENT);
+                for (; index < this.manager.getStatements().size(); index++) {
+                    matchingStatement = this.manager.getStatements().get(index);
+                    if ((matchingStatement.getLabel().equals(recurringStatement.getLabel())) && (matchingStatement.getAmount() == recurringStatement.getAmount()) && (matchingStatement.isExpense() == recurringStatement.isExpense())) {
+                        found = true;
+                        break;
                     }
                 }
+                if (found) {
+                    int exitCode = this.deleteStatement(matchingStatement, suppressWarnings);
+                    if (!suppressWarnings) {
+                        if (exitCode != 0 && exitCode != -2) {
+                            throw new BudgetingException("When removal of matching statement was attempted, ", exitCode, matchingStatement, ExceptionSource.DELETE_RECURRING_STATEMENT);
+                        }
+                    }
+                }
+                switch (recurringStatement.getTimeUnit()) {
+                    case 'd':
+                        nextDate = nextDate.plusDays(recurringStatement.getFrequency());
+                        break;
+                    case 'w':
+                        nextDate = nextDate.plusWeeks(recurringStatement.getFrequency());
+                        break;
+                    case 'm':
+                        nextDate = nextDate.plusMonths(recurringStatement.getFrequency());
+                        break;
+                    case 'y':
+                        nextDate = nextDate.plusYears(recurringStatement.getFrequency());
+                        break;
+                }
+                found = false;
             }
-            switch (recurringStatement.getTimeUnit()) {
-                case 'd':
-                    nextDate = nextDate.plusDays(recurringStatement.getFrequency());
-                    break;
-                case 'w':
-                    nextDate = nextDate.plusWeeks(recurringStatement.getFrequency());
-                    break;
-                case 'm':
-                    nextDate = nextDate.plusMonths(recurringStatement.getFrequency());
-                    break;
-                case 'y':
-                    nextDate = nextDate.plusYears(recurringStatement.getFrequency());
-                    break;
-            }
-            found = false;
         }
     }
 
     public void deleteStatement(Statement statement) throws BudgetingException {
         int exitCode = this.deleteStatement(statement, false);
-        switch (exitCode) {
-            case -2:
-                throw new BudgetingException("Statement not found", exitCode, statement, ExceptionSource.DELETE_STATEMENT);
-            case -1:
-                throw new BudgetingException("Statement was not deleted due to unknown causes", exitCode, statement, ExceptionSource.DELETE_STATEMENT);
-            case 0:
-                break;
-            default:
-                throw new BudgetingException("When removal of matching statement was attempted, ", exitCode, statement, ExceptionSource.DELETE_STATEMENT);
+        if (exitCode != 0 && exitCode != -2) {
+            throw new BudgetingException("When removal of matching statement was attempted, ", exitCode, statement, ExceptionSource.DELETE_STATEMENT);
         }
     }
 
@@ -246,8 +225,7 @@ public final class DataSource {
         if (statement.isExpense()) {
             this.manager.setAmountSpent(this.getAmountSpent() - statement.getAmount());
             this.manager.setBalance(this.getBalance() + statement.getAmount());
-        }
-        else {
+        } else {
             if (statement.getAmount() > this.getBalance()) {
                 exitCode = 1;
                 if (suppressWarnings && !this.manager.deleteStatement(statement)) {
@@ -265,69 +243,54 @@ public final class DataSource {
 
     public void updateRecurringStatement(RecurringStatement newRecurringStatement) throws BudgetingException {
         RecurringStatement oldRecurringStatement = this.manager.getRecurringStatement(newRecurringStatement.getStatementID());
-        if (!this.manager.updateRecurringStatement(newRecurringStatement)) {
-            throw new BudgetingException("Recurring statement was not deleted due to unknown causes", -1, newRecurringStatement, ExceptionSource.UPDATE_RECURRING_STATEMENT);
-        }
-        LocalDate nextDate = LocalDate.parse(newRecurringStatement.getDate(), DATE_FORMATTER);
-        Statement matchingStatement = null;
-        boolean suppressWarnings = false;
-        boolean found = false;
-        int index = 0;
-        while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && ((nextDate.getYear() > this.tableMonth.getYear()) || (nextDate.getMonthValue() >= this.tableMonth.getMonthValue()))) {
-            if (nextDate.isAfter(this.today)) {
-                suppressWarnings = true;
-            }
-            for (; index < this.manager.getStatements().size(); index++) {
-                matchingStatement = this.manager.getStatements().get(index);
-                if ((matchingStatement.getLabel().equals(oldRecurringStatement.getLabel())) && (matchingStatement.getAmount() == oldRecurringStatement.getAmount()) && (matchingStatement.isExpense() == oldRecurringStatement.isExpense())) {
-                    found = true;
-                    break;
+        if (this.manager.updateRecurringStatement(newRecurringStatement)) {
+            LocalDate nextDate = LocalDate.parse(newRecurringStatement.getDate(), DATE_FORMATTER);
+            Statement matchingStatement = null;
+            boolean suppressWarnings = false;
+            boolean found = false;
+            int index = 0;
+            while ((nextDate.isAfter(this.tableMonth) || nextDate.isEqual(this.tableMonth)) && ((nextDate.getYear() > this.tableMonth.getYear()) || (nextDate.getMonthValue() >= this.tableMonth.getMonthValue()))) {
+                if (nextDate.isAfter(this.today)) {
+                    suppressWarnings = true;
                 }
-            }
-            if (found) {
-                int exitCode = this.updateStatement(matchingStatement, suppressWarnings);
-                if (!suppressWarnings) {
-                    switch (exitCode) {
-                        case -2:
-                            throw new BudgetingException("Matching statement not found", exitCode, matchingStatement, ExceptionSource.UPDATE_RECURRING_STATEMENT);
-                        case -1:
-                            throw new BudgetingException("Matching statement was not updated due to unknown causes", exitCode, matchingStatement, ExceptionSource.UPDATE_RECURRING_STATEMENT);
-                        case 0:
-                            break;
-                        default:
-                            throw new BudgetingException("When editing of matching statement was attempted, ", exitCode, matchingStatement, ExceptionSource.UPDATE_RECURRING_STATEMENT);
+                for (; index < this.manager.getStatements().size(); index++) {
+                    matchingStatement = this.manager.getStatements().get(index);
+                    if ((matchingStatement.getLabel().equals(oldRecurringStatement.getLabel())) && (matchingStatement.getAmount() == oldRecurringStatement.getAmount()) && (matchingStatement.isExpense() == oldRecurringStatement.isExpense())) {
+                        found = true;
+                        break;
                     }
                 }
+                if (found) {
+                    int exitCode = this.updateStatement(matchingStatement, suppressWarnings);
+                    if (!suppressWarnings) {
+                        if (exitCode != 0 && exitCode != -2) {
+                            throw new BudgetingException("When editing of matching statement was attempted, ", exitCode, matchingStatement, ExceptionSource.UPDATE_RECURRING_STATEMENT);
+                        }
+                    }
+                }
+                switch (newRecurringStatement.getTimeUnit()) {
+                    case 'd':
+                        nextDate = nextDate.plusDays(newRecurringStatement.getFrequency());
+                        break;
+                    case 'w':
+                        nextDate = nextDate.plusWeeks(newRecurringStatement.getFrequency());
+                        break;
+                    case 'm':
+                        nextDate = nextDate.plusMonths(newRecurringStatement.getFrequency());
+                        break;
+                    case 'y':
+                        nextDate = nextDate.plusYears(newRecurringStatement.getFrequency());
+                        break;
+                }
+                found = false;
             }
-            switch (newRecurringStatement.getTimeUnit()) {
-                case 'd':
-                    nextDate = nextDate.plusDays(newRecurringStatement.getFrequency());
-                    break;
-                case 'w':
-                    nextDate = nextDate.plusWeeks(newRecurringStatement.getFrequency());
-                    break;
-                case 'm':
-                    nextDate = nextDate.plusMonths(newRecurringStatement.getFrequency());
-                    break;
-                case 'y':
-                    nextDate = nextDate.plusYears(newRecurringStatement.getFrequency());
-                    break;
-            }
-            found = false;
         }
     }
 
     public void updateStatement(Statement newStatement) throws BudgetingException {
         int exitCode = this.updateStatement(newStatement, false);
-        switch (exitCode) {
-            case -2:
-                throw new BudgetingException("Matching statement not found", exitCode, newStatement, ExceptionSource.UPDATE_STATEMENT);
-            case -1:
-                throw new BudgetingException("Matching statement was not updated due to unknown causes", exitCode, newStatement, ExceptionSource.UPDATE_STATEMENT);
-            case 0:
-                break;
-            default:
-                throw new BudgetingException("When editing of matching statement was attempted, ", exitCode, newStatement, ExceptionSource.UPDATE_STATEMENT);
+        if (exitCode != 0 && exitCode != -2) {
+            throw new BudgetingException("When editing of matching statement was attempted, ", exitCode, newStatement, ExceptionSource.UPDATE_STATEMENT);
         }
     }
 
@@ -352,14 +315,12 @@ public final class DataSource {
             }
             this.manager.setAmountSpent(currAmountSpent + newStatement.getAmount());
             this.manager.setBalance(currBalance - newStatement.getAmount());
-        }
-        else if (oldStatement.isExpense()) {
+        } else if (oldStatement.isExpense()) {
             double currAmountSpent = this.getAmountSpent() - oldStatement.getAmount();
             double currBalance = this.getBalance() + oldStatement.getAmount();
             this.manager.setAmountSpent(currAmountSpent - newStatement.getAmount());
             this.manager.setBalance(currBalance + newStatement.getAmount());
-        }
-        else if (newStatement.isExpense()) {
+        } else if (newStatement.isExpense()) {
             double currBalance = this.getBalance() - oldStatement.getAmount();
             if (newStatement.getAmount() > currBalance) {
                 exitCode = exitCode + 1;
@@ -372,8 +333,7 @@ public final class DataSource {
             }
             this.manager.setAmountSpent(this.getAmountSpent() + newStatement.getAmount());
             this.manager.setBalance(currBalance - newStatement.getAmount());
-        }
-        else {
+        } else {
             double newBalance = this.getBalance() - oldStatement.getAmount() + newStatement.getAmount();
             this.manager.setBalance(newBalance);
         }
