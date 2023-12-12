@@ -54,6 +54,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
 
     public void changeTable(String newStatementTableName) {
         this.init(newStatementTableName, this.getRecurringStatementTableName());
+        this.onCreate(this.getWritableDatabase());
     }
 
     private void init(String statementTableName, String recurringStatementTableName) {
@@ -81,6 +82,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
         );
         this.setCreateBudgetingTableSQL(
                 "CREATE TABLE " + (statementTableName + BUDGETING_TABLE_NAME_SUFFIX) + " (" +
+                BudgetingEntry._ID + " INTEGER PRIMARY KEY," +
                 BudgetingEntry.COLUMN_BALANCE + " REAL," +
                 BudgetingEntry.COLUMN_AMOUNT_SPENT + " REAL," +
                 BudgetingEntry.COLUMN_SPENDING_LIMIT + " REAL," +

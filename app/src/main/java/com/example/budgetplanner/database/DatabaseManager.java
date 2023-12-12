@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -29,11 +30,11 @@ final class DatabaseManager {
         this.database = this.helper.getWritableDatabase();
         this.statements = new ArrayList<Statement>();
         this.recurringStatements = new ArrayList<RecurringStatement>();
-        this.budgeting = new Budgeting();
+        this.budgeting = this.readBudgeting();
+        this.context = context;
         this.readStatements();
         this.readRecurringStatements();
-        this.readBudgeting();
-        //Toast.makeText(context, "balance=" + this.budgeting.getBalance(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "balance=" + this.budgeting.getBalance(), Toast.LENGTH_SHORT).show();
     }
 
     public void save() {
@@ -79,7 +80,7 @@ final class DatabaseManager {
         this.database = this.helper.getWritableDatabase();
         this.readStatements();
         this.readRecurringStatements();
-        this.readBudgeting();
+        this.budgeting = this.readBudgeting();
     }
 
     private void readStatements() {
@@ -154,29 +155,37 @@ final class DatabaseManager {
         }
     }
 
-    private void readBudgeting() {
+    private Budgeting readBudgeting() {
+        double balance = 0.00, amountSpent = 0.00, spendingLimit = 0.00, savingLimit = 0.00;
         String[] projection = {
+                BudgetingEntry._ID,
                 BudgetingEntry.COLUMN_BALANCE,
                 BudgetingEntry.COLUMN_AMOUNT_SPENT,
                 BudgetingEntry.COLUMN_SPENDING_LIMIT,
                 BudgetingEntry.COLUMN_SAVING_LIMIT
         };
+        String sortOrder = BudgetingEntry._ID + " DESC";
+
         try (Cursor cursor = this.database.query(
                 this.helper.getBudgetingTableName(),
                 projection,
-                null, null, null, null, null
+                null, null, null, null,
+                sortOrder
         )) {
-            if (cursor.getCount() == 0) {
-                return;
+            if (cursor != null && cursor.moveToFirst()) {
+                //Toast.makeText(this.context, String.valueOf(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[1]))), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this.context, String.valueOf(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[2]))), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.context, String.valueOf(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[3]))), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.context, String.valueOf(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[4]))), Toast.LENGTH_SHORT).show();
+                balance = cursor.getDouble(cursor.getColumnIndexOrThrow(projection[1]));
+                amountSpent = cursor.getDouble(cursor.getColumnIndexOrThrow(projection[2]));
+                spendingLimit = cursor.getDouble(cursor.getColumnIndexOrThrow(projection[3]));
+                savingLimit = cursor.getDouble(cursor.getColumnIndexOrThrow(projection[4]));
             }
-            while (cursor.moveToNext()) {
-                //Toast.makeText(this.context, String.valueOf(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[0]))), Toast.LENGTH_SHORT).show();
-                this.budgeting.setBalance(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[0])));
-                this.budgeting.setAmountSpent(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[1])));
-                this.budgeting.setSpendingLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[2])));
-                this.budgeting.setSavingLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(projection[3])));
-            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log any exceptions for debugging
         }
+        return new Budgeting(balance, amountSpent, spendingLimit, savingLimit);
     }
 
     public boolean insertStatement(Statement statement) {

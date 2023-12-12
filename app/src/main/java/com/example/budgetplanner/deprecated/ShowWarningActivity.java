@@ -20,18 +20,18 @@ public class ShowWarningActivity extends AppCompatActivity {
 
         Button showWarningButton = findViewById(R.id.show_warning_button);
 
-        showWarningButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Display the warning dialog using WarningDialogManager
-                WarningDialogManager.showLimitExceededDialog(ShowWarningActivity.this, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Handle "Yes" button click (e.g., delete entry, update database)
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
+//        showWarningButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Display the warning dialog using WarningDialogManager
+//                WarningDialogManager.showLimitExceededDialog(ShowWarningActivity.this, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        // Handle "Yes" button click (e.g., delete entry, update database)
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        });
     }
 }
