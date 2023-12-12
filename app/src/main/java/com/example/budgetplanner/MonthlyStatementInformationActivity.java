@@ -1,18 +1,27 @@
 package com.example.budgetplanner;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.example.budgetplanner.database.Budgeting;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.budgetplanner.database.BudgetingException;
 import com.example.budgetplanner.database.DataSource;
 import com.example.budgetplanner.database.Statement;
+import com.example.budgetplanner.database.Utils;
+
 import java.util.List;
 
 public class MonthlyStatementInformationActivity extends AppCompatActivity {
@@ -20,6 +29,7 @@ public class MonthlyStatementInformationActivity extends AppCompatActivity {
     private DataSource ds;
     private ProgressBar currentSavingBar, currentLimitBar;
     private TextView outputPercentSavings, outputPercentSetLimit;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +42,17 @@ public class MonthlyStatementInformationActivity extends AppCompatActivity {
             String selectedMonth = intent.getStringExtra("month");
             int selectedYear = intent.getIntExtra("year", 0);
             MonthItem month = new MonthItem(selectedMonth.toUpperCase(), selectedYear);
-            this.ds = new DataSource(MonthlyStatementInformationActivity.this, month);
+            try {
+                this.ds = new DataSource(MonthlyStatementInformationActivity.this, month);
+            } catch (BudgetingException e) {
+                Utils.diagnoseException(this, e);
+            }
 
             currentSavingBar = findViewById(R.id.savingsProgressBar2);
             currentLimitBar = findViewById(R.id.limitProgressBar2);
-            this.updateProgressBars();
-            this.printSavings();
-            this.printSetLimit();
+//            this.updateProgressBars();
+//            this.printSavings();
+//            this.printSetLimit();
 
             TextView balance = findViewById(R.id.balanceStmtView);
             balance.setText(String.format("$%.2f", this.ds.getBalance()));
@@ -50,47 +64,31 @@ public class MonthlyStatementInformationActivity extends AppCompatActivity {
             // Use the selectedMonth and selectedYear to load and display detailed information
             // for the selected month, including charts and other data.
 
-//          // Budgeting budgeting = this.ds.getBudgeting();
             List<Statement> statements = this.ds.getStatements();
 
-            // Get the container layout
-            LinearLayout containerLayout = findViewById(R.id.containerLayout);
+            // Get the RecyclerView
+            recyclerView = findViewById(R.id.recyclerViewMain);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            // Dynamically create TextView for each statement
-            for (Statement statement : statements) {
-                TextView statementTextView = new TextView(this);
-                statementTextView.setText(statement.getLabel() + ": $" + statement.getAmount() + " on " + statement.getDate());
+            // Use the adapter to populate the RecyclerView
+            StatementAdapter adapter = new StatementAdapter(statements);
+            recyclerView.setAdapter(adapter);
 
-                statementTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        openEditIncomeExpenseActivity(statement);
-                    }
+            // Log container layout visibility
+            Log.d("ContainerLayoutVisibility", "Is Visible: " + (recyclerView.getVisibility() == View.VISIBLE));
 
-                    private void openEditIncomeExpenseActivity(Statement statement) {
-                        Intent inte = new Intent(MonthlyStatementInformationActivity.this, EditIncomeExpenseActivity.class);
-                        // Pass relevant data to EditIncomeExpenseActivity using intent extras
-                        inte.putExtra("label", statement.getLabel());
-                        inte.putExtra("amount", statement.getAmount());
-                        inte.putExtra("date", statement.getDate());
-                        startActivity(inte);
-                    }
-                });
+            // Button functionButton is now outside the loop
+            Button functionButton = findViewById(R.id.functionButton);
+            functionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Proceed to the menu page
+                    Intent menuIntent = new Intent(MonthlyStatementInformationActivity.this, MenuActivity.class);
+                    startActivity(menuIntent);
+                    finish(); // Finish this activity so the user cannot go back to it
+                }
+            });
 
-                Button functionButton = findViewById(R.id.functionButton);
-                functionButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Proceed to the menu page
-                        Intent menuIntent = new Intent(MonthlyStatementInformationActivity.this, MenuActivity.class);
-                        startActivity(menuIntent);
-                        finish(); // Finish this activity so the user cannot go back to it
-                    }
-                });
-
-
-                containerLayout.addView(statementTextView);
-            }
         }
     }
 
@@ -102,14 +100,14 @@ public class MonthlyStatementInformationActivity extends AppCompatActivity {
     }
 
     public void printSavings() {
-        outputPercentSavings = (TextView) findViewById(R.id.savingsPerc);
+        outputPercentSavings = findViewById(R.id.savingsPerc);
         double savingsPercentage = ((this.ds.getBalance() / this.ds.getSavingLimit()) * 100);
         outputPercentSavings.setText(String.format("%.2f%%", savingsPercentage));
         textColorChange(savingsPercentage, false);
     }
 
     public void printSetLimit() {
-        outputPercentSetLimit = (TextView) findViewById(R.id.setLimitPerc);
+        outputPercentSetLimit = findViewById(R.id.setLimitPerc);
         double setLimitPercentage = ((this.ds.getAmountSpent() / this.ds.getSpendingLimit()) * 100);
         outputPercentSetLimit.setText(String.format("%.2f%%", setLimitPercentage));
         textColorChange(setLimitPercentage, true);
@@ -147,6 +145,56 @@ public class MonthlyStatementInformationActivity extends AppCompatActivity {
                 currentSavingBar.getProgressDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
             }
         }
+    }
 
+    private class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.StatementViewHolder> {
+
+        private List<Statement> statements;
+
+        public StatementAdapter(List<Statement> statements) {
+            this.statements = statements;
+        }
+
+        @NonNull
+        @Override
+        public StatementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_statement, parent, false);
+            return new StatementViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull StatementViewHolder holder, int position) {
+            Statement statement = statements.get(position);
+            holder.bind(statement);
+        }
+
+        @Override
+        public int getItemCount() {
+            return statements.size();
+        }
+
+        public class StatementViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView labelTextView;
+            private TextView amountTextView;
+            private TextView dateTextView;
+            private TextView noteTextView;
+
+            public StatementViewHolder(@NonNull View itemView) {
+                super(itemView);
+                labelTextView = itemView.findViewById(R.id.labelTextView);
+                amountTextView = itemView.findViewById(R.id.amountTextView);
+                dateTextView = itemView.findViewById(R.id.dateTextView);
+                noteTextView = itemView.findViewById(R.id.noteTextView);
+            }
+
+            public void bind(Statement statement) {
+                labelTextView.setText(statement.getLabel());
+                String amountSign = statement.isExpense() ? "-$" : "+$";
+                amountTextView.setText("amount: " + amountSign + statement.getAmount());
+                dateTextView.setText(statement.getDate());
+                noteTextView.setText(statement.getNotes());
+            }
+        }
     }
 }

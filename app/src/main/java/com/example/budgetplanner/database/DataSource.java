@@ -1,6 +1,7 @@
 package com.example.budgetplanner.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -139,34 +140,48 @@ public final class DataSource {
 
     private int insertStatement(Statement statement, boolean suppressWarnings) {
         int exitCode = 0;
-        if (this.manager.getStatements().contains(statement)) {
-            exitCode = -2;
-            return exitCode;
-        }
-        if (statement.isExpense()) {
-            if (statement.getAmount() > this.getBalance()) {
-                exitCode = exitCode + 1;
-            }
-            if (statement.getAmount() + this.getAmountSpent() > this.getSpendingLimit()) {
-                exitCode = exitCode + 2;
-            }
-            if (exitCode != 0) {
-                if (suppressWarnings && !this.manager.insertStatement(statement)) {
-                    exitCode = -1;
-                }
+        try {
+            if (this.manager.getStatements().contains(statement)) {
+                exitCode = -2;
                 return exitCode;
             }
-            this.manager.setAmountSpent(this.getAmountSpent() + statement.getAmount());
-            this.manager.setBalance(this.getBalance() - statement.getAmount());
+
+            if (statement.isExpense()) {
+                if (statement.getAmount() > this.getBalance()) {
+                    exitCode = exitCode + 1;
+                }
+                if (statement.getAmount() + this.getAmountSpent() > this.getSpendingLimit()) {
+                    exitCode = exitCode + 2;
+                }
+
+                if (exitCode != 0) {
+                    if (suppressWarnings && !this.manager.insertStatement(statement)) {
+                        exitCode = -1;
+                        // Log the failure to insert
+                        Log.e("DataSource", "Failed to insert statement: " + statement);
+                    }
+                    return exitCode;
+                }
+
+                this.manager.setAmountSpent(this.getAmountSpent() + statement.getAmount());
+                this.manager.setBalance(this.getBalance() - statement.getAmount());
+            } else {
+                this.manager.setBalance(this.getBalance() + statement.getAmount());
+            }
+
+            if (!this.manager.insertStatement(statement)) {
+                exitCode = -1;
+                // Log the failure to insert
+                Log.e("DataSource", "Failed to insert statement: " + statement);
+            }
+        } catch (Exception e) {
+            Log.e("DataSource", "Exception during statement insertion: " + e.getMessage());
+            e.printStackTrace();
         }
-        else {
-            this.manager.setBalance(this.getBalance() + statement.getAmount());
-        }
-        if (!this.manager.insertStatement(statement)) {
-            exitCode = -1;
-        }
+
         return exitCode;
     }
+
 
     public void deleteRecurringStatement(RecurringStatement recurringStatement) throws BudgetingException {
         if (this.manager.getRecurringStatements().contains(recurringStatement)) {

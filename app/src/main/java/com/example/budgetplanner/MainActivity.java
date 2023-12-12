@@ -7,11 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.budgetplanner.database.BudgetingException;
+import com.example.budgetplanner.database.DataSource;
+import com.example.budgetplanner.database.Utils;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -21,11 +28,28 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MonthAdapter adapter;
     private List<MonthItem> monthList;
+    private TextView balanceView; // Add TextView for balance
+    DataSource ds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        String month = today.getMonth().toString();
+        int year = today.getYear();
+
+        MonthItem monthItem = new MonthItem(month, year);
+
+        try {
+            ds = new DataSource(this, monthItem);
+        } catch (BudgetingException e) {
+            Utils.diagnoseException(MainActivity.this, e);
+        }
+
+        // Initialize balanceView
+        balanceView = findViewById(R.id.balanceView);
 
         recyclerView = findViewById(R.id.recyclerViewMain);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -38,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // Set an item click listener for the adapter
-        com.example.budgetplanner.MonthAdapter.OnItemClickListener itemClickListener =
-                new com.example.budgetplanner.MonthAdapter.OnItemClickListener() {
+        MonthAdapter.OnItemClickListener itemClickListener =
+                new MonthAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(String selectedMonth, int selectedYear) {
                         // Launch MonthlyStatementInformationActivity with selected month and year
@@ -83,14 +107,21 @@ public class MainActivity extends AppCompatActivity {
         // Clear the list
         monthList.clear();
 
-        // Add the current month and year
-        monthList.add(new MonthItem(getMonthName(currentMonth), currentYear));
+        // Fetch balance from the database
+        double balance = ds.getBalance();
+
+                // Add the current month and year with the fetched balance
+                monthList.add(new MonthItem(getMonthName(currentMonth), currentYear));
+
+        // Update balanceView
+        balanceView.setText(String.format("$%.2f", balance));
 
         // Notify the adapter that the data has changed
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
     }
+
 
     private String getMonthName(int month) {
         String[] monthNames = {

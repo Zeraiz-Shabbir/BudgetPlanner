@@ -18,7 +18,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.budgetplanner.database.BudgetingException;
 import com.example.budgetplanner.database.DataSource;
+import com.example.budgetplanner.database.Utils;
 
 public class BudgetingActivity extends AppCompatActivity {
 
@@ -42,14 +44,18 @@ public class BudgetingActivity extends AppCompatActivity {
         //Toast.makeText(BudgetingActivity.this, "year=" + year, Toast.LENGTH_SHORT).show();
         //Toast.makeText(BudgetingActivity.this, "month=" + month, Toast.LENGTH_SHORT).show();
         //Toast.makeText(BudgetingActivity.this, "monthItem=" + monthItem.toString(), Toast.LENGTH_SHORT).show();
-        this.ds = new DataSource(BudgetingActivity.this, monthItem);
+        try {
+            this.ds = new DataSource(BudgetingActivity.this, monthItem);
+        } catch (BudgetingException e) {
+            Utils.diagnoseException(this, e);
+        }
         Button savingButton = findViewById(R.id.saving_button);
         Button setLimitButton = findViewById(R.id.set_limit_button);
         currentSavingBar = findViewById(R.id.current_saving_bar);
         currentLimitBar = findViewById(R.id.current_limit_bar);
-        this.updateProgressBars();
-        this.printSavings();
-        this.printSetLimit();
+//        this.updateProgressBars();
+//        this.printSavings();
+//        this.printSetLimit();
 
         savingButton.setOnClickListener(new View.OnClickListener() {
             @Override

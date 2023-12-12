@@ -9,4 +9,5 @@
     <color name="buttonColor">#4CAF50</color> <!-- Green -->
     <color name="textColorPrimary">#212121</color> <!-- Dark Text -->
     <color name="textColorSecondary">#757575</color> <!-- Light Text -->
+    <color name="backgroundApp">#E6F7FF</color>
 </resources>

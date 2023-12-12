@@ -1,15 +1,18 @@
 package com.example.budgetplanner;
 
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast; // Add this import
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -47,16 +50,6 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //boolean isIncome = intent.getBooleanExtra(InitialSetupActivity.INTENT_ISINCOME_NAME, false);
         boolean isPayment = intent.getBooleanExtra(InitialSetupActivity.INTENT_ISEXPENSE_NAME, false);
-
-        /*
-        if (isIncome) {
-            // Customize UI and behavior for adding income
-            // For example, update the title or labels
-        } else {
-            // Customize UI and behavior for adding expense
-            // For example, update the title or labels
-        }
-        */
 
         // Initialize views
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
@@ -102,44 +95,59 @@ public class AddIncomeExpenseActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText labelField = findViewById(R.id.labelEditText);
-                EditText amountField = findViewById(R.id.amountEditText);
-                CalendarView dateField = findViewById(R.id.calendar);
-                EditText notesField = null;
-                String label = labelField.getText().toString();
-                Double amount = Double.parseDouble(amountField.getText().toString());
-                LocalDate dateObj = (dateToday.get()) ? today : Instant.ofEpochMilli(dateField.getDate()).atZone(ZoneId.systemDefault()).toLocalDate();
-                String date = dateObj.format(DataSource.DATE_FORMATTER);
-                String notes = notesField.getText().toString();
-                long sid = new Random().nextLong();
-                Statement statement = null;
-                if (oneTimeStatement.get()) {
-                    statement = new Statement(sid, date, label, amount, notes, isPayment);
-                    try {
-                        ds.insertStatement(statement);
-                    } catch (BudgetingException e) {
-                        Utils.diagnoseException(AddIncomeExpenseActivity.this, e);
-                    }
-                }
-                else {
-                    int frequency = (int) numberDropDown.getSelectedItem();
-                    String time = (String) timeDropDown.getSelectedItem();
-                    statement = new RecurringStatement(sid, date, label, amount, notes, isPayment, frequency, time.charAt(0));
-                    try {
+                try {
+                    EditText labelField = findViewById(R.id.labelEditText);
+                    EditText amountField = findViewById(R.id.amountEditText);
+                    CalendarView calendarView = findViewById(R.id.calendar);
+                    EditText notesField = findViewById(R.id.notes);
+
+                    String label = labelField.getText().toString();
+                    Double amount = Double.parseDouble(amountField.getText().toString());
+
+                    // Get the selected date components
+                    long dateMillis = calendarView.getDate();
+                    LocalDate selectedDate = Instant.ofEpochMilli(dateMillis).atZone(ZoneId.systemDefault()).toLocalDate();
+
+                    String date = selectedDate.format(DataSource.DATE_FORMATTER);
+                    String notes = notesField.getText().toString();
+                    long sid = new Random().nextLong();
+                    Statement statement = null;
+
+                    if (oneTimeStatement.get()) {
+                        statement = new Statement(sid, date, label, amount, notes, isPayment);
+                        try {
+                            ds.insertStatement(statement);
+                        } catch(BudgetingException e) {
+                            Utils.diagnoseException(AddIncomeExpenseActivity.this, e);
+                        }
+                        ds.save();
+                    } else {
+                        String frequencyStr = (String) numberDropDown.getSelectedItem();
+                        int frequency = Integer.parseInt(frequencyStr);
+                        String time = (String) timeDropDown.getSelectedItem();
+
+                        Toast.makeText(AddIncomeExpenseActivity.this, "Selected Frequency: " + frequency, Toast.LENGTH_SHORT).show();
+                        if (!time.isEmpty()) {
+                            Toast.makeText(AddIncomeExpenseActivity.this, "Selected Time: " + time.charAt(0), Toast.LENGTH_SHORT).show();
+                        }
+
+                        statement = new RecurringStatement(sid, date, label, amount, notes, isPayment, frequency, time.charAt(0));
                         ds.insertRecurringStatement((RecurringStatement) statement);
-                    } catch (BudgetingException e) {
-                        Utils.diagnoseException(AddIncomeExpenseActivity.this, e);
+                        ds.save();
                     }
+                    finish();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    String errorMessage = "An error occurred. Please check your input.";
+                    if (e instanceof NumberFormatException) {
+                        errorMessage = "Invalid frequency input. Please enter a valid number.";
+                    }
+                    Toast.makeText(AddIncomeExpenseActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 }
-                /*
-                double balance = ds.getBalance();
-                double setLimit = ds.getSetLimit();
-                // Field for monitoring how much the user has come closer to spending limit
-                double spentAmt = ds.getAmountSpent();
-                double minAmtToSave = ds.getSavings();
-                 */
-                finish();
             }
         });
+
+
+
     }
 }
